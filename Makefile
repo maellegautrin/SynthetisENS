@@ -11,8 +11,9 @@ synthetisENS: main.o
 	g++ obj/main.o -o synthetisENS $(LIBS)
 
 main.o:
+	mkdir -p obj
 	g++ -c src/main.cpp -o obj/main.o $(FLAGS)
 
 .PHONY: clean
 clean:
-	rm -f obj/*.o synthetisENS
+	rm -rf obj/ synthetisENS
