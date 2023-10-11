@@ -2,3 +2,4 @@ obj/
 synthetisENS
 
 .clangd
+.vscode/
