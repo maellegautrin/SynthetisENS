@@ -2,8 +2,9 @@
 #define __OS_LINUX__
 
 #define sine_id 1
-#define square_id 4
+#define square_id 2
 #define sawtooth_id 3
+#define blit_id 4
 
 
 
@@ -11,6 +12,8 @@
 
 #include <iostream>
 
+
+#include <Blit.h>
 #include <BlitSaw.h>
 #include <BlitSquare.h>
 #include "SineWave.h"
@@ -26,8 +29,10 @@ Button* button;
 Button* sinebutton;
 Button* squarebutton;
 Button* sawbutton;
+Button* blitbutton;
 Scale* freq;
 Scale* duration;
+Scale* harmo;
 
 int wave = sine_id;
 
@@ -39,6 +44,7 @@ void play_sound();
 void set_sine();
 void set_square();
 void set_saw();
+void set_blit();
 
 
 
@@ -70,6 +76,10 @@ int main(int argc, char *argv[])
   sawbutton->signal_clicked().connect(sigc::ptr_fun(&set_saw));
   box->add(*sawbutton);
 
+  blitbutton = new Button("BLIT");
+  blitbutton->signal_clicked().connect(sigc::ptr_fun(&set_blit));
+  box->add(*blitbutton);
+
   freq = new Scale(ORIENTATION_HORIZONTAL);
   freq->set_range(0.0, 1000.0);
   box->add(*freq);
@@ -77,6 +87,11 @@ int main(int argc, char *argv[])
   duration = new Scale(ORIENTATION_HORIZONTAL);
   duration->set_range(0.0, 100000.0);
   box->add(*duration);
+
+  harmo = new Scale(ORIENTATION_HORIZONTAL);
+  harmo->set_range(0,10);
+  harmo->set_increments(1,1);
+  box->add(*harmo);
 
   window->add(*box);
   window->show_all_children();
@@ -103,12 +118,17 @@ void set_saw(){
   wave = sawtooth_id;
 }
 
+void set_blit(){
+  wave = blit_id;
+}
+
 // Function definitions
 void play_sound()
 {
   dac = new RtWvOut( 1 );
   BlitSquare square;
   BlitSaw sawtooth;
+  Blit blit;
   SineWave sine;
   if(wave == sine_id){
     sine.setFrequency(freq->get_value());
@@ -121,6 +141,11 @@ void play_sound()
   if(wave == sawtooth_id){
     sawtooth.setFrequency(freq->get_value());
     for (int i = 0; i < duration->get_value(); i++) dac->tick(sawtooth.tick());
+  }
+  if(wave == blit_id){
+    blit.setFrequency(freq->get_value());
+    blit.setHarmonics(harmo->get_value());
+    for (int i = 0; i < duration->get_value(); i++) dac->tick(blit.tick());
   }
   delete dac;
 }
