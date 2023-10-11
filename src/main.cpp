@@ -2,7 +2,7 @@
 #define __OS_LINUX__
 
 #define sine_id 1
-#define square_id 2
+#define square_id 4
 #define sawtooth_id 3
 
 
