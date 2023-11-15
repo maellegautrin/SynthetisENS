@@ -13,18 +13,18 @@ namespace synthetisens {
 
   class signal {
     public:
-      signal operator+(signal other);
-
-      virtual double tick();
+      virtual double tick() = 0;
   };
+
+  signal& operator+(const signal& sig1, const signal& sig2);
 
   class sum_signal : public signal {
     private:
-      signal sig1;
-      signal sig2;
+      signal& sig1;
+      signal& sig2;
 
     public:
-      sum_signal(signal sig1, signal sig2);
+      sum_signal(signal& sig1, signal& sig2);
       double tick();
   };
 

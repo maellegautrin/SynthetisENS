@@ -15,17 +15,17 @@ component::~component() {
   delete[] this->outputs;
 }
 
-signal* component::get_input_signals() {
-  signal* signals = new signal[this->num_inputs];
+signal** component::get_input_signals() {
+  signal** signals = new signal*[this->num_inputs];
   
   for (int i = 0; i < this->num_inputs; i++) {
-    signals[i] = this->inputs[i]->get_output_signal(this);
+    signals[i] = &this->inputs[i]->get_output_signal(this);
   }
 
   return signals;
 }
 
-signal component::get_output_signal(component* output) {
+signal& component::get_output_signal(component* output) {
   for (int i = 0; i < this->num_outputs; i++) {
     for (component* comp : this->outputs[i]) {
       if (comp == output) return generate_signal(i);

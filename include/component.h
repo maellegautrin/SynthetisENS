@@ -21,8 +21,8 @@ namespace synthetisens {
       component** inputs;
       std::vector<component*>* outputs;
 
-      signal* get_input_signals();
-      signal get_output_signal(component* output);
+      signal** get_input_signals();
+      signal& get_output_signal(component* output);
 
     public:
       int num_inputs;
@@ -31,7 +31,7 @@ namespace synthetisens {
       component(int num_inputs, int num_outputs);
       ~component();
 
-      virtual signal generate_signal(int output) = 0;
+      virtual signal& generate_signal(int output) = 0;
   };
 
 }

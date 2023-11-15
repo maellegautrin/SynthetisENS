@@ -10,18 +10,12 @@
 using namespace std;
 using namespace synthetisens;
 
-signal signal::operator+(signal other) {
-  return sum_signal(*this, other);
+signal& operator+(signal& sig1, signal& sig2) {
+  sum_signal* sum = new sum_signal(sig1, sig2);
+  return *sum;
 }
 
-double signal::tick() {
-  return 0;
-}
-
-sum_signal::sum_signal(signal sig1, signal sig2) {
-  this->sig1 = sig1;
-  this->sig2 = sig2;
-}
+sum_signal::sum_signal(signal& sig1, signal& sig2) : sig1(sig1), sig2(sig2) {}
 
 double sum_signal::tick() {
   return this->sig1.tick() + this->sig2.tick();
