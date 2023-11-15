@@ -22,6 +22,7 @@
 
 using namespace stk;
 using namespace Gtk;
+using namespace std;
 
 // Gtk components
 Window* window;
@@ -55,18 +56,6 @@ int main(int argc, char *argv[])
   std::cout << Stk::sampleRate() << std::endl;
   auto app = Application::create(argc, argv, "synthetisens.app");
   wave = sine_id;
-
-  synthetisens::sinusoidal_component ok(500);
-  synthetisens::sinusoidal_component ok2(500);
-  synthetisens::sum_component ok3(ok, ok2);
-  synthetisens::signal& s = ok3.generate_signal(0);
-
-  SineWave sine;
-  sine.setFrequency(500);
-  for (int i = 0; i < 1000; i++) {
-    std::cout << sine.tick() << std::endl;
-    std::cout << s.tick() << std::endl;
-  }
 
   window = new Window();
   window->set_default_size(200, 200);
@@ -167,7 +156,8 @@ void set_blit(){
 void play_sound()
 {
   dac = new RtWvOut( 1 );
-  synthetisens::sin_signal sine(freq->get_value());
+  synthetisens::component* c1 = new synthetisens::sinusoidal_component(freq->get_value());
+  synthetisens::signal& sine = c1->generate_signal(0);
 
   for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
 

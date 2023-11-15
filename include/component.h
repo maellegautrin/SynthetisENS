@@ -25,8 +25,8 @@ namespace synthetisens {
       signal& get_output_signal(component* output);
 
     public:
-      int num_inputs;
-      int num_outputs;
+      const int num_inputs;
+      const int num_outputs;
 
       component(int num_inputs, int num_outputs);
       ~component();
@@ -38,15 +38,15 @@ namespace synthetisens {
     public:
       double frequency;
 
-    sinusoidal_component(double frequency);
-    signal& generate_signal(int output) override;
-};
+      sinusoidal_component(double frequency);
+      signal& generate_signal(int output) override;
+  };
 
   class sum_component : public component {
     public:
-    sum_component(component& c1, component& c2);
-    signal& generate_signal(int output) override;
-};
+      sum_component(component& c1, component& c2);
+      signal& generate_signal(int output) override;
+  };
 
 }
 

@@ -1,32 +1,88 @@
 #include "signal.h"
 #include "SineWave.h"
-#include <cmath>
+#include <algorithm>
+#include <iostream>
 
 #define PI 3.14159265358979323846
-#define SAMPLE_RATE 44100
-
-//RATE = SIZE * FREQ / SAMPLE_RATE
 
 using namespace std;
 using namespace synthetisens;
 
-signal& operator+(signal& sig1, signal& sig2) {
-  sum_signal* sum = new sum_signal(sig1, sig2);
-  return *sum;
+signal::signal() : signal(0, new double[0]) {}
+
+signal::signal(int size, double* values) : signal(size, values, false) {}
+
+signal::signal(int size, double* values, bool loop) : size(size), position(0), values(values), loop(loop) {}
+
+signal::~signal() {
+  delete[] values;
 }
 
-sum_signal::sum_signal(signal& sig1, signal& sig2) : sig1(sig1), sig2(sig2) {}
-
-double sum_signal::tick() {
-  return this->sig1.tick() + this->sig2.tick();
+int signal::get_size() const {
+  return this->size;
 }
 
-
-sin_signal::sin_signal(double freq) {
-  this->sine.setFrequency(freq);
-  this->time = 0;
+double signal::get_value(int position) const {
+  if (position < 0 || position >= this->size) return this->loop ? this->values[position % size] : 0;
+  return this->values[position];
 }
 
-double sin_signal::tick() {
-  return this->sine.tick();
+double signal::tick() {
+  if (this->position < 0 || this->position >= this->size) {
+    if (!this->loop) return 0;
+    this->position %= this->size;
+  }
+  return this->values[this->position++];
+}
+
+void signal::reset() {
+  this->position = 0;
+}
+
+signal& operator+(const signal& sig1, const signal& sig2) {
+  int size = max(sig1.get_size(), sig2.get_size());
+  double* values = new double[size];
+
+  for (int i = 0; i < size; i++) {
+    values[i] = sig1.get_value(i) + sig2.get_value(i);
+  }
+
+  signal* output_signal = new signal(size, values);
+  return *output_signal;
+}
+
+signal& operator-(const signal& sig1, const signal& sig2) {
+  int size = max(sig1.get_size(), sig2.get_size());
+  double* values = new double[size];
+
+  for (int i = 0; i < size; i++) {
+    values[i] = sig1.get_value(i) - sig2.get_value(i);
+  }
+
+  signal* output_signal = new signal(size, values);
+  return *output_signal;
+}
+
+signal& operator*(const signal& sig1, const signal& sig2) {
+  int size = max(sig1.get_size(), sig2.get_size());
+  double* values = new double[size];
+
+  for (int i = 0; i < size; i++) {
+    values[i] = sig1.get_value(i) * sig2.get_value(i);
+  }
+
+  signal* output_signal = new signal(size, values);
+  return *output_signal;
+}
+
+signal& operator/(const signal& sig1, const signal& sig2) {
+  int size = max(sig1.get_size(), sig2.get_size());
+  double* values = new double[size];
+
+  for (int i = 0; i < size; i++) {
+    values[i] = sig1.get_value(i) / sig2.get_value(i);
+  }
+
+  signal* output_signal = new signal(size, values);
+  return *output_signal;
 }

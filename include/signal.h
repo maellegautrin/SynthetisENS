@@ -7,36 +7,36 @@
 #ifndef _SIGNAL_H
 #define _SIGNAL_H
 
+#define SAMPLE_FREQ 44100
 #include "SineWave.h"
 
 namespace synthetisens {
 
   class signal {
-    public:
-      virtual double tick() = 0;
-  };
-
-  class sum_signal : public signal {
     private:
-      signal& sig1;
-      signal& sig2;
-
+      int size;
+      int position;
+      double* values;
+      bool loop;
+      
     public:
-      sum_signal(signal& sig1, signal& sig2);
-      double tick();
-  };
+      signal();
+      signal(int size, double* values);
+      signal(int size, double* values, bool loop);
+      ~signal();
+      
+      int get_size() const;
+      double get_value(int position) const;
 
-  class sin_signal : public signal {
-    private:
-      stk::SineWave sine;
-      int time;
-
-    public:
-      sin_signal(double freq);
       double tick();
+      void reset();
   };
 
 }
-synthetisens::signal& operator+( synthetisens::signal& sig1, synthetisens::signal& sig2);
+
+synthetisens::signal& operator+(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
+synthetisens::signal& operator-(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
+synthetisens::signal& operator*(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
+synthetisens::signal& operator/(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
 
 #endif // _SIGNAL_H
