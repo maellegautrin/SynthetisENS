@@ -34,3 +34,21 @@ signal& component::get_output_signal(component* output) {
 
   return generate_signal(0);
 }
+
+sinusoidal_component::sinusoidal_component(double frequency) : component(0, 1), frequency(frequency) {}
+
+signal& sinusoidal_component::generate_signal(int output) {
+sin_signal* output_signal = new sin_signal(frequency);
+return *output_signal;
+}
+
+sum_component::sum_component(component& c1, component& c2) : component(2,1) {
+inputs[0]=&c1;
+inputs[1]=&c2;
+}
+
+signal& sum_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = *inputs[0] + *inputs[1];
+  return output_signal;
+}

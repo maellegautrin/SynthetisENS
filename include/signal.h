@@ -16,8 +16,6 @@ namespace synthetisens {
       virtual double tick() = 0;
   };
 
-  signal& operator+(const signal& sig1, const signal& sig2);
-
   class sum_signal : public signal {
     private:
       signal& sig1;
@@ -39,5 +37,6 @@ namespace synthetisens {
   };
 
 }
+synthetisens::signal& operator+( synthetisens::signal& sig1, synthetisens::signal& sig2);
 
 #endif // _SIGNAL_H

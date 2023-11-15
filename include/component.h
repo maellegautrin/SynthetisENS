@@ -34,6 +34,20 @@ namespace synthetisens {
       virtual signal& generate_signal(int output) = 0;
   };
 
+  class sinusoidal_component : public component {
+    public:
+      double frequency;
+
+    sinusoidal_component(double frequency);
+    signal& generate_signal(int output) override;
+};
+
+  class sum_component : public component {
+    public:
+    sum_component(component& c1, component& c2);
+    signal& generate_signal(int output) override;
+};
+
 }
 
 #endif // _COMPONENT_H
