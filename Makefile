@@ -8,24 +8,28 @@ STKFLAGS = -I/usr/include/stk
 STKLIBS = -lstk
 
 DEF = $(STKDEF)
-FLAGS = $(SYNTFLAGS) $(GTKMMFLAGS) $(STKFLAGS)
+FLAGS = $(GTKMMFLAGS) $(STKFLAGS) $(SYNTFLAGS)
 LIBS = $(GTKMMLIBS) $(STKLIBS)
 
-OBJ = main.o component.o signal.o
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
 
-synthetisENS: $(OBJ)
-	g++ obj/main.o obj/component.o obj/signal.o -o synthetisENS $(LIBS)
+# Liste des fichiers source
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 
-main.o: src/main.cpp
-	mkdir -p obj
-	g++ -c src/main.cpp -o obj/main.o $(DEF) $(FLAGS)
+OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
 
-component.o: src/component.cpp
-	g++ -c src/component.cpp -o obj/component.o $(DEF) $(FLAGS)
+# Nom de l'exécutable
+TARGET = synthetisENS
 
-signal.o: src/signal.cpp
-	g++ -c src/signal.cpp -o obj/signal.o $(DEF) $(FLAGS)
+all: $(TARGET)
 
-.PHONY: clean
+$(TARGET): $(OBJECTS)
+	g++ $^ -o $@ $(LIBS)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	mkdir -p $(OBJ_DIR)
+	g++ -c $< -o $@ $(DEF) $(FLAGS)
 clean:
-	rm -rf obj/ synthetisENS
+	rm -rf $(OBJ_DIR) $(TARGET)
