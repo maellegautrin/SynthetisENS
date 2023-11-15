@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#include "component.h"
 
 #include <Blit.h>
 #include <BlitSaw.h>
@@ -51,6 +52,7 @@ void set_blit();
 // Main function
 int main(int argc, char *argv[])
 {
+  std::cout << Stk::sampleRate() << std::endl;
   auto app = Application::create(argc, argv, "synthetisens.app");
   wave = sine_id;
 
@@ -123,29 +125,39 @@ void set_blit(){
 }
 
 // Function definitions
+// void play_sound()
+// {
+//   dac = new RtWvOut( 1 );
+//   BlitSquare square;
+//   BlitSaw sawtooth;
+//   Blit blit;
+//   SineWave sine;
+//   if(wave == sine_id){
+//     sine.setFrequency(freq->get_value());
+//     for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
+//   }
+//   if(wave == square_id){
+//     square.setFrequency(freq->get_value());
+//     for (int i = 0; i < duration->get_value(); i++) dac->tick(square.tick());
+//   }
+//   if(wave == sawtooth_id){
+//     sawtooth.setFrequency(freq->get_value());
+//     for (int i = 0; i < duration->get_value(); i++) dac->tick(sawtooth.tick());
+//   }
+//   if(wave == blit_id){
+//     blit.setFrequency(freq->get_value());
+//     blit.setHarmonics(harmo->get_value());
+//     for (int i = 0; i < duration->get_value(); i++) dac->tick(blit.tick());
+//   }
+//   delete dac;
+// }
+
 void play_sound()
 {
   dac = new RtWvOut( 1 );
-  BlitSquare square;
-  BlitSaw sawtooth;
-  Blit blit;
-  SineWave sine;
-  if(wave == sine_id){
-    sine.setFrequency(freq->get_value());
-    for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
-  }
-  if(wave == square_id){
-    square.setFrequency(freq->get_value());
-    for (int i = 0; i < duration->get_value(); i++) dac->tick(square.tick());
-  }
-  if(wave == sawtooth_id){
-    sawtooth.setFrequency(freq->get_value());
-    for (int i = 0; i < duration->get_value(); i++) dac->tick(sawtooth.tick());
-  }
-  if(wave == blit_id){
-    blit.setFrequency(freq->get_value());
-    blit.setHarmonics(harmo->get_value());
-    for (int i = 0; i < duration->get_value(); i++) dac->tick(blit.tick());
-  }
+  synthetisens::sin_signal sine(freq->get_value());
+
+  for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
+
   delete dac;
 }
