@@ -18,10 +18,6 @@ signal::~signal() {
   delete[] values;
 }
 
-int signal::get_size() const {
-  return this->size;
-}
-
 double signal::get_value(int position) const {
   if (position < 0 || position >= this->size) return this->loop ? this->values[position % size] : 0;
   return this->values[position];
@@ -40,7 +36,9 @@ void signal::reset() {
 }
 
 signal& operator+(const signal& sig1, const signal& sig2) {
-  int size = max(sig1.get_size(), sig2.get_size());
+  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+
+  int size = max(sig1.size, sig2.size);
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -52,7 +50,9 @@ signal& operator+(const signal& sig1, const signal& sig2) {
 }
 
 signal& operator-(const signal& sig1, const signal& sig2) {
-  int size = max(sig1.get_size(), sig2.get_size());
+  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+
+  int size = max(sig1.size, sig2.size);
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -64,7 +64,9 @@ signal& operator-(const signal& sig1, const signal& sig2) {
 }
 
 signal& operator*(const signal& sig1, const signal& sig2) {
-  int size = max(sig1.get_size(), sig2.get_size());
+  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+
+  int size = max(sig1.size, sig2.size);
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -76,7 +78,9 @@ signal& operator*(const signal& sig1, const signal& sig2) {
 }
 
 signal& operator/(const signal& sig1, const signal& sig2) {
-  int size = max(sig1.get_size(), sig2.get_size());
+  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+
+  int size = max(sig1.size, sig2.size);
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
