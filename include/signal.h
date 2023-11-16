@@ -38,5 +38,6 @@ synthetisens::signal& operator+(const synthetisens::signal& sig1, const syntheti
 synthetisens::signal& operator-(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
 synthetisens::signal& operator*(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
 synthetisens::signal& operator/(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
+synthetisens::signal& derivative(const synthetisens::signal& sig);
 
 #endif // _SIGNAL_H
