@@ -14,18 +14,18 @@ namespace synthetisens {
 
   class signal {
     private:
-      int size;
       int position;
-      double* values;
-      bool loop;
+      const double* values;
       
     public:
+      const int size;
+      const bool loop;
+
       signal();
       signal(int size, double* values);
       signal(int size, double* values, bool loop);
       ~signal();
       
-      int get_size() const;
       double get_value(int position) const;
 
       double tick();
