@@ -116,7 +116,7 @@ signal& normalize(const signal& sig) {
   for (int i=0; i<size; i++){
     nvalues[i]=sig.get_value(i)/max;
   }
-  signal* output_signal = new signal(size, nvalues,sig.loop);
+  signal* output_signal = new signal(size, nvalues, sig.loop);
   return *output_signal;
 }
 
@@ -127,9 +127,9 @@ signal& primitive(const signal& sig) {
   double current_sum = 0;
   nvalues[0] = 0;
   for (int i=1; i<size; i++){
-
-    sommecum[i]=sommecum[i-1] + sig.get_value(i)*(SAMPLE_FREQ);
+    current_sum += (sig.get_value(i) + sig.get_value(i-1)) / (2 * SAMPLE_FREQ);
+    nvalues[i] = current_sum;
   }
-  signal* output_signal = new signal(size, nvalues,sig.loop);
+  signal* output_signal = new signal(size, nvalues, sig.loop);
   return *output_signal;
 }
