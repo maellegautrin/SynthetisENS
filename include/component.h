@@ -48,12 +48,65 @@ namespace synthetisens {
       signal& generate_signal(int output) override;
   };
 
+  class square_component : public component {
+    public:
+    square_component(double frequency, double max_amplitude, double min_amplitude);
+    signal& generate_signal(int output) override;
+  };
+
+  class triangle_component : public component {
+    public:
+    triangle_component(double frequency, double amplitude);
+    signal& generate_signal(int output) override;
+  };
+
+  class sawtooth_component : public component {
+    public:
+    sawtooth_component(double frequency, double amplitude);
+    signal& generate_signal(int output) override;
+  };
+
   class sum_component : public component {
     public:
       sum_component(component& c1, component& c2);
       signal& generate_signal(int output) override;
   };
 
+  class sub_component : public component {
+    public:
+      sub_component(component& c1, component& c2);
+      signal& generate_signal(int output) override;
+  };
+
+  class prod_component : public component {
+    public:
+      prod_component(component& c1, component& c2);
+      signal& generate_signal(int output) override;
+  };
+
+  class div_component : public component {
+    public:
+      div_component(component& c1, component& c2);
+      signal& generate_signal(int output) override;
+  };
+
+  class derivative_component : public component {
+    public:
+      derivative_component(component& c1);
+      signal& generate_signal(int output) override;
+  };
+
+  class normalize_component : public component {
+    public:
+      normalize_component(component& c1);
+      signal& generate_signal(int output) override;
+  };
+
+  class primitive_component : public component {
+    public:
+      primitive_component(component& c1);
+      signal& generate_signal(int output) override;
+  };
 }
 
 #endif // _COMPONENT_H

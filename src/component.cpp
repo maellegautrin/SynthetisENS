@@ -85,6 +85,57 @@ signal& sinusoidal_component::generate_signal(int output) {
   return *output_signal;
 }
 
+square_component::square_component(double frequency, double max_amplitude, double min_amplitude) : component(0, 3, 1) {
+  this->parameters[0] = frequency;
+  this->parameters[1] = max_amplitude;
+  this->parameters[2] = min_amplitude;
+}
+
+signal& square_component::generate_signal(int output) {
+  int size = SAMPLE_FREQ / this->parameters[0];
+  double* values = new double[size];
+  for (int i = 0; i < (size/2); i++) {
+      values[i] = this->parameters[2];
+  }
+  for (int i = size/2; i < size; i++) {
+      values[i] = this->parameters[1];
+  }
+  signal* output_signal = new signal(size, values, true);
+  return *output_signal;
+}
+
+triangle_component::triangle_component(double frequency, double amplitude) : component(0, 2, 1) {
+  this->parameters[0] = frequency;
+  this->parameters[1] = amplitude;
+}
+
+signal& triangle_component::generate_signal(int output) {
+  int size = SAMPLE_FREQ / this->parameters[0];
+  double* values = new double[size];
+  for (int i = 0; i < (size/2); i++) {
+      values[i] = (this->parameters[1]*i*2)/size;
+  }
+  for (int i = size/2; i < size; i++) {
+      values[i] = this->parameters[1]*(1-2*i/size);
+  }
+  signal* output_signal = new signal(size, values, true);
+  return *output_signal;
+}
+
+sawtooth_component::sawtooth_component(double frequency, double amplitude) : component(0, 2, 1) {
+  this->parameters[0] = frequency;
+  this->parameters[1] = amplitude;
+}
+
+signal& sawtooth_component::generate_signal(int output) {
+  int size = SAMPLE_FREQ / this->parameters[0];
+  double* values = new double[size];
+  for (int i = 0; i < size; i++) {
+      values[i] = (this->parameters[1]*i)/size;
+  }
+  signal* output_signal = new signal(size, values, true);
+  return *output_signal;
+}
 sum_component::sum_component(component& c1, component& c2) : component(2, 0, 1) {
   inputs[0]=&c1;
   inputs[1]=&c2;
@@ -93,5 +144,68 @@ sum_component::sum_component(component& c1, component& c2) : component(2, 0, 1) 
 signal& sum_component::generate_signal(int output) {
   signal** inputs = get_input_signals();
   signal& output_signal = *inputs[0] + *inputs[1];
+  return output_signal;
+}
+
+prod_component::prod_component(component& c1, component& c2) : component(2, 0, 1) {
+  inputs[0]=&c1;
+  inputs[1]=&c2;
+}
+
+signal& prod_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = *inputs[0] * *inputs[1];
+  return output_signal;
+}
+
+sub_component::sub_component(component& c1, component& c2) : component(2, 0, 1) {
+  inputs[0]=&c1;
+  inputs[1]=&c2;
+}
+
+signal& sub_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = *inputs[0] - *inputs[1];
+  return output_signal;
+}
+
+div_component::div_component(component& c1, component& c2) : component(2, 0, 1) {
+  inputs[0]=&c1;
+  inputs[1]=&c2;
+}
+
+signal& div_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = *inputs[0] / *inputs[1];
+  return output_signal;
+}
+
+derivative_component::derivative_component(component& c1) : component(1, 0, 1) {
+  inputs[0]=&c1;
+}
+
+signal& derivative_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = derivative(*inputs[0]);
+  return output_signal;
+}
+
+normalize_component::normalize_component(component& c1) : component(1, 0, 1) {
+  inputs[0]=&c1;
+}
+
+signal& normalize_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = normalize(*inputs[0]);
+  return output_signal;
+}
+
+primitive_component::primitive_component(component& c1) : component(1, 0, 1) {
+  inputs[0]=&c1;
+}
+
+signal& primitive_component::generate_signal(int output) {
+  signal** inputs = get_input_signals();
+  signal& output_signal = primitive(*inputs[0]);
   return output_signal;
 }
