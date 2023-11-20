@@ -92,7 +92,7 @@ signal& operator/(const signal& sig1, const signal& sig2) {
 }
 
 signal& derivative(const signal& sig) {
-  int size = sig.get_size();
+  int size = sig.size;
   double* values = new double[size];
 
   values[0] = (sig.get_value(1) - sig.get_value(0)) * SAMPLE_FREQ;

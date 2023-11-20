@@ -156,7 +156,7 @@ void set_blit(){
 void play_sound()
 {
   dac = new RtWvOut( 1 );
-  synthetisens::component* c1 = new synthetisens::sinusoidal_component(freq->get_value());
+  synthetisens::component* c1 = new synthetisens::sinusoidal_component(freq->get_value(), 1, 0);
   synthetisens::signal& sine = c1->generate_signal(0);
 
   for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
