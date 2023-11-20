@@ -156,10 +156,18 @@ void set_blit(){
 void play_sound()
 {
   dac = new RtWvOut( 1 );
-  synthetisens::component* c1 = new synthetisens::sinusoidal_component(freq->get_value(), 1, 0);
-  synthetisens::signal& sine = c1->generate_signal(0);
+  synthetisens::component* freq = new synthetisens::constant_component(440);
+  synthetisens::component* ampl = new synthetisens::constant_component(1);
+  synthetisens::component* phase = new synthetisens::constant_component(0);
+  
+  synthetisens::component* c1 = new synthetisens::sinusoidal_component();
+  c1->connect_input(0, *freq, 0);
+  c1->connect_input(1, *ampl, 0);
+  c1->connect_input(2, *phase, 0);
 
-  for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
+  synthetisens::signal* sine = c1->generate_output(0).value.signal;
+
+  for (int i = 0; i < duration->get_value(); i++) dac->tick(sine->tick());
 
   delete dac;
 }
