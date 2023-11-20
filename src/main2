@@ -1,0 +1,207 @@
+// Forcing OS to linux (useful for Stk)
+#include "gtkmm/action.h"
+#include "gtkmm/enums.h"
+#include "gtkmm/frame.h"
+#include "gtkmm/grid.h"
+#include "gtkmm/layout.h"
+#include "gtkmm/notebook.h"
+#include "gtkmm/scrolledwindow.h"
+#define __OS_LINUX__
+
+#define sine_id 1
+#define square_id 2
+#define sawtooth_id 3
+#define blit_id 4
+
+
+
+#include <gtkmm.h>
+#include <cairo.h>
+
+#include <iostream>
+
+
+#include <Blit.h>
+#include <BlitSaw.h>
+#include <BlitSquare.h>
+#include "SineWave.h"
+#include "RtWvOut.h"
+
+
+using namespace stk;
+using namespace Gtk;
+
+// Gtk components
+ApplicationWindow* window;
+Box* box;
+Button* button;
+Button* sinebutton;
+Button* squarebutton;
+Button* sawbutton;
+Button* blitbutton;
+Scale* freq;
+Scale* duration;
+Scale* harmo;
+GtkWidget* image;
+
+
+
+//Cairo components
+cairo_surface_t *surface;
+cairo_t *cr;
+
+
+
+
+
+
+int wave = sine_id;
+
+RtWvOut* dac;
+
+
+// Function prototypes
+void play_sound();
+void set_sine();
+void set_square();
+void set_saw();
+void set_blit();
+
+
+
+// Main function
+int main(int argc, char *argv[])
+{
+  auto app = Application::create(argc, argv, "synthetisens.app");
+  wave = sine_id;
+
+  window = new ApplicationWindow();
+  window->set_default_size(1200, 900);
+  window->set_title("synthetisENS");
+
+
+
+/*--------------------DECLARATIONS----------------------*/
+
+  DrawingArea* synth = new DrawingArea();
+  DrawingArea* keyboard = new DrawingArea();
+
+  Grid* main_grid = new Grid();
+  ScrolledWindow* sigs = new ScrolledWindow();
+  ScrolledWindow* filters = new ScrolledWindow();
+  ScrolledWindow* operators = new ScrolledWindow();
+  ScrolledWindow* other = new ScrolledWindow();
+  Frame* components_frame = new Frame("components");
+  Frame* workspace_frame = new Frame("workspace");
+  Grid* synth_grid = new Grid();
+  Notebook* components = new Notebook();
+  Notebook* workspace = new Notebook();
+  //Image* img1 = new Image("1.png");
+  //Image* img2 = new Image("2.png");
+  MenuBar* menubar = new MenuBar();
+  MenuItem* file = new MenuItem("file");
+  MenuItem* edit = new MenuItem("edit");
+  MenuItem* view = new MenuItem("view");
+
+
+  Image* sin = new Image("sin.png");
+
+
+
+/*-----------------------------------------------------*/
+
+  sigs->add(*sin);
+-
+  components->append_page(*sigs, "signals");
+  components->append_page(*filters, "filters");
+  components->append_page(*operators, "operators");
+  components->append_page(*other,"other");
+  workspace->append_page(*synth_grid, "synth");
+  workspace->append_page(*keyboard, "keyboard");
+
+  sigs->set_size_request(360,270);
+  synth_grid->set_size_request(800,600);
+
+  components_frame->set_valign(ALIGN_FILL);
+  components->set_valign(ALIGN_FILL);
+  sigs->set_valign(ALIGN_FILL);
+  components_frame->add(*components);
+  workspace_frame->set_valign(ALIGN_FILL);
+  workspace_frame->add(*workspace);
+
+  
+
+  menubar->append(*file);
+  menubar->append(*edit);
+  menubar->append(*view);
+
+  main_grid->attach(*menubar,0,0,3,1);
+  main_grid->attach_next_to(*components_frame,*menubar,POS_BOTTOM,3,3);
+  main_grid->attach_next_to(*workspace_frame,*components_frame,POS_RIGHT,3,3);
+
+  //layout->put(*menubar,0,0);
+  //layout->put(*components_frame,0,80);
+  //layout->put(*workspace_frame,300,80);
+
+  window->add(*main_grid);
+  window->set_resizable(false);
+  
+  window->show_all_children();
+  
+
+  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
+  cr = cairo_create (surface);
+
+  image = gtk_image_new();
+
+  
+
+  return app->run(*window);
+}
+
+
+void set_sine(){
+  wave = sine_id;
+}
+
+
+void set_square(){
+  wave = square_id;
+}
+
+
+void set_saw(){
+  wave = sawtooth_id;
+}
+
+void set_blit(){
+  wave = blit_id;
+}
+
+// Function definitions
+void play_sound()
+{
+  dac = new RtWvOut( 1 );
+  BlitSquare square;
+  BlitSaw sawtooth;
+  Blit blit;
+  SineWave sine;
+  if(wave == sine_id){
+    sine.setFrequency(freq->get_value());
+    for (int i = 0; i < duration->get_value(); i++) dac->tick(sine.tick());
+  }
+  if(wave == square_id){
+    square.setFrequency(freq->get_value());
+    for (int i = 0; i < duration->get_value(); i++) dac->tick(square.tick());
+  }
+  if(wave == sawtooth_id){
+    sawtooth.setFrequency(freq->get_value());
+    for (int i = 0; i < duration->get_value(); i++) dac->tick(sawtooth.tick());
+  }
+  if(wave == blit_id){
+    blit.setFrequency(freq->get_value());
+    blit.setHarmonics(harmo->get_value());
+    for (int i = 0; i < duration->get_value(); i++) dac->tick(blit.tick());
+  }
+  delete dac;
+}

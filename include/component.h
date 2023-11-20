@@ -1,6 +1,6 @@
 /*
- * Here is defined the component class
- * A component is a block with in/out signals and modulate it thanks to some parameters
+ * Here is defined the Component class
+ * A Component is a block with in/out signals and modulate it thanks to some parameters
  *
  * It can be a signal generator (#in = 0)
  * It can be a summer (#in = 2, #out = 1)
@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef _COMPONENT_H
-#define _COMPONENT_H
+#ifndef _Component_H
+#define _Component_H
 
 #include "signal.h"
 #include <vector>
@@ -48,8 +48,8 @@ namespace synthetisens {
       const int num_parameters;
       const int num_outputs;
 
-      component(int num_inputs, int num_parameters, int num_outputs);
-      ~component();
+      Component(int num_inputs, int num_parameters, int num_outputs);
+      ~Component();
 
       void connect_input(int input_num, component& input, int port_sender);
       void disconnect_input(int input_num);
@@ -133,4 +133,4 @@ namespace synthetisens {
   };
 }
 
-#endif // _COMPONENT_H
+#endif // _Component_H
