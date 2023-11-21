@@ -174,7 +174,6 @@ void ComponentEffective::place(Gtk::Frame* slot){
         }
     }
 
-    std::cout << "I HAVE BEEN PLACED";
     slot->remove();
     slot->add(*this);
 

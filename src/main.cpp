@@ -262,11 +262,11 @@ int main(int argc, char *argv[])
 
 
 
-  synthetisens::ComponentEffective* sine_eff = new synthetisens::ComponentEffective("sine.png",synthetisens::SIGNAL_COMPONENT,0);
-  synthetisens::ComponentEffective* sum_eff = new synthetisens::ComponentEffective("sum.png",synthetisens::OPERATOR_COMPONENT,0);
+  //synthetisens::ComponentEffective* sine_eff = new synthetisens::ComponentEffective("sine.png",synthetisens::SIGNAL_COMPONENT,0);
+  //synthetisens::ComponentEffective* sum_eff = new synthetisens::ComponentEffective("sum.png",synthetisens::OPERATOR_COMPONENT,0);
 
 
-  sine_eff->place(synth_grid_quartering[3][2]);
+  //sine_eff->place(synth_grid_quartering[3][2]);
   //sum_eff->place(synth_grid_quartering[1][4]);
 
   /*box = new Box(ORIENTATION_VERTICAL);

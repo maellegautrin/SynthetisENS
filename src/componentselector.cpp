@@ -10,7 +10,6 @@ extern ComponentSelector* current_selector;
 
 void ComponentSelector::click_handler(){
     current_selector = this;
-    std::cout << "coucou";
 }
 
 ComponentSelector::ComponentSelector(char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
