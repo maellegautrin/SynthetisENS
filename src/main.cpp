@@ -25,6 +25,7 @@
 #include "component.h"
 #include "componentselector.h"
 #include "componenteffective.h"
+#include "gridslot.h"
 
 #include <Blit.h>
 #include <BlitSaw.h>
@@ -191,6 +192,13 @@ void drag_and_drop_source_setup(Widget* source){
   g_signal_connect(source, "drag-end", G_CALLBACK (drag_end_handl), NULL);*/
 
 /*--------------------------------------------*/
+/*-------------TEMPORARY SELECTORS------------*/
+
+void on_clicked_slot(){
+
+}
+
+/*--------------------------------------------*/
 
 
 
@@ -223,11 +231,7 @@ int main(int argc, char *argv[])
   auto synth_grid_quartering = new Frame* [COLUMNS][LINES] ;
   for(int i = 0; i < COLUMNS; i++){
     for(int j = 0; j < LINES; j++){
-      synth_grid_quartering[i][j] = new Frame();
-      synth_grid_quartering[i][j]->set_size_request(150,100);
-      synth_grid->attach(*synth_grid_quartering[i][j],i,j,1,1);
-      Button* slot_button = new Button();
-      synth_grid_quartering[i][j]->set_child(slot_button);
+      synth_grid_quartering[i][j] = new synthetisens::GridSlot(synth_grid, i, j);
       
     }
   }
@@ -236,7 +240,7 @@ int main(int argc, char *argv[])
   port_label = 0;
   label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   current_selector = NULL;
-  
+
   synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentSelector* square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
   synthetisens::ComponentSelector* triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
