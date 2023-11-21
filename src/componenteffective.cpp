@@ -3,6 +3,7 @@
 #include "componenteffective.h"
 #include "componentselector.h"
 #include "gtkmm/enums.h"
+#include "gtkmm/frame.h"
 #include "gtkmm/grid.h"
 #include "gtkmm/widget.h"
 #include "gtkmm/image.h"
@@ -14,6 +15,26 @@
 #include <vector>
 
 
+char* strremove(char* str, char letter){
+    int removed = 0;
+    const int n = strlen(str) - 1;
+    char* newstr = new char[n];
+    for(int i = 0; i < n; i++){
+        if(str[i] == letter){
+            removed = 1;
+        }
+        newstr[i] = str[i+removed];
+    }
+    return newstr;
+}
+
+char* strcopy(const char* str){
+    char* copy = new char[strlen(str)];
+    for(int i = 0; i < strlen(str); i++){
+        copy[i] = str[i];
+    }
+    return copy;
+}
 
 
 using namespace synthetisens;
@@ -36,7 +57,8 @@ void Port::click_handler(){
         last_clicked = this;
     }
     else{
-        char* label = &(label_space[port_label]);
+        char label_chr = label_space[port_label];
+        char label[2] = {label_chr, '\0'};
         port_label = (port_label + 1) % strlen(label_space);  
         this->link(last_clicked,label);
         last_clicked->link(this,label);
@@ -62,14 +84,21 @@ int check_existing_link(std::vector<Wire*> links, Port* destination) {
 
 void Port::inlink(Port* destination, char* label){
     if(links.size() > 0){
-        if(links[0]->destination == destination){
-            links.erase(links.begin());
-            this->set_label("");
+        links.erase(links.begin());
+        
+        this->set_label("");
+        if(links[0]->destination != destination){
+            links.insert(links.begin(),1,new Wire(this,destination));
+            const char* coldlabel = this->get_label().c_str();
+            char* oldlabel = strcopy(coldlabel);
+            this->set_label(strcat(oldlabel,label));
         }
     }
     else{
         links.insert(links.begin(),1,new Wire(this,destination));
-        this->set_label(label);
+        const char* coldlabel = this->get_label().c_str();
+        char* oldlabel = strcopy(coldlabel);
+        this->set_label(strcat(oldlabel,label));
     }
 }
 
@@ -77,11 +106,15 @@ void Port::outlink(Port* destination, char* label){
     int pos = check_existing_link(links,destination);
             if(pos >= 0){
                 links.erase(links.begin()+pos);
-                this->set_label("");
+                const char* coldlabel = this->get_label().c_str();
+                char* oldlabel = strcopy(coldlabel);
+                this->set_label(strremove(oldlabel,label[0]));
             }
             else{
                 links.insert(links.begin(), 1, new Wire(this,destination));
-                this->set_label(label);
+            const char* coldlabel = this->get_label().c_str();
+            char* oldlabel = strcopy(coldlabel);
+                this->set_label(strcat(oldlabel,label));
             }
 }
 
@@ -107,7 +140,7 @@ ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int co
     virtual_component = match_component(type, component_id);
 
 
-    input_ports = new Port*[virtual_component->num_inputs];
+    input_ports = new Port*[virtual_component->num_inputs + virtual_component->num_parameters];
     for (int i = 0; i < (virtual_component->num_inputs + virtual_component->num_parameters); i++){
         input_ports[i] = new Port(SIGNAL_INPUT_PORT,this);
     }
@@ -118,7 +151,7 @@ ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int co
 
 }
 
-void ComponentEffective::place(Gtk::Container* slot){
+void ComponentEffective::place(Gtk::Frame* slot){
     const int num_inputs = virtual_component->num_inputs + virtual_component->num_parameters;
     const int m = MAX(num_inputs, virtual_component->num_outputs);
     if (num_inputs > 0){     //on attache les ports d'entrées à gauche de l'image du composant, les uns aux dessus des autres
@@ -141,6 +174,7 @@ void ComponentEffective::place(Gtk::Container* slot){
         }
     }
 
+    slot->remove();
     slot->add(*this);
 
 }

@@ -41,6 +41,9 @@ synthetisens::Port* last_clicked;
 int port_label;
 char* label_space;
 
+//Selector variables
+synthetisens::ComponentSelector* current_selector;
+
 // Gtk components
 Window* window;
 Box* box;
@@ -223,6 +226,8 @@ int main(int argc, char *argv[])
       synth_grid_quartering[i][j] = new Frame();
       synth_grid_quartering[i][j]->set_size_request(150,100);
       synth_grid->attach(*synth_grid_quartering[i][j],i,j,1,1);
+      Button* slot_button = new Button();
+      synth_grid_quartering[i][j]->set_child(slot_button);
       
     }
   }
@@ -230,6 +235,8 @@ int main(int argc, char *argv[])
   last_clicked = NULL;
   port_label = 0;
   label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  current_selector = NULL;
+  
   synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentSelector* square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
   synthetisens::ComponentSelector* triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
@@ -254,8 +261,9 @@ int main(int argc, char *argv[])
   synthetisens::ComponentEffective* sine_eff = new synthetisens::ComponentEffective("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentEffective* sum_eff = new synthetisens::ComponentEffective("sum.png",synthetisens::OPERATOR_COMPONENT,0);
 
+
   sine_eff->place(synth_grid_quartering[3][2]);
-  sum_eff->place(synth_grid_quartering[1][4]);
+  //sum_eff->place(synth_grid_quartering[1][4]);
 
   /*box = new Box(ORIENTATION_VERTICAL);
 

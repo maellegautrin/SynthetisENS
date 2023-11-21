@@ -6,7 +6,7 @@
 #include "component.h"
 #include "componentselector.h"
 #include "gtkmm/grid.h"
-#include "gtkmm/container.h"
+#include "gtkmm/frame.h"
 #include "gtkmm/button.h"
 #include "gtkmm/widget.h"
 #include "gtkmm/image.h"
@@ -66,7 +66,7 @@ class ComponentEffective : public Gtk::Grid {
 
     ComponentEffective(char* img, ComponentType type, int component_id);
 
-    void place(Gtk::Container* slot);
+    void place(Gtk::Frame* slot);
 
     const int component_id;
     const ComponentType type;
