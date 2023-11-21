@@ -70,14 +70,15 @@ class ComponentEffective : public Gtk::Grid {
 
     const int component_id;
     const ComponentType type;
+    component* virtual_component;
     char* imglink;
 
+    int port_position(Port* port);
 
     private:
 
     Gtk::Box* box;
     Gtk::Image* img;
-    component* virtual_component;
     Port** input_ports;
     Port** output_ports;
 
