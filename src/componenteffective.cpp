@@ -9,17 +9,42 @@
 #include "gtkmm/box.h"
 #include <iostream>
 #include <list>
+#include <string>
 #include <vector>
+
 
 
 using namespace synthetisens;
 
+
+component* match_component(ComponentType type, int id);
+
+
 Wire::Wire(Port* source, Port* destination) : source(source), destination(destination) {
+
+
+
 }
+
+void Port::click_handler(){}
+/*    if (!last_clicked) {
+        last_clicked = this;
+    }
+    else{
+        char* label = &(label_space[port_label]);
+        port_label = (port_label + 1) % (sizeof(label_space)/sizeof(char));  
+        this->link(last_clicked,label);
+        last_clicked->link(this,label);
+        last_clicked = NULL;
+    }
+
+}*/
 
 Port::Port(PortType type) : type(type) {
 
     links = std::vector<Wire*>();
+    this->set_label("");
+    //this->signal_clicked().connect(sigc::ptr_fun(&synthetisens::Port::click_handler));
 
 }
 
@@ -30,35 +55,39 @@ int check_existing_link(std::vector<Wire*> links, Port* destination) {
     return -1;
     }
 
-void Port::inlink(Port* destination){
+void Port::inlink(Port* destination, char* label){
     if(links.size() > 0){
         if(links[0]->destination == destination){
             links.erase(links.begin());
+            this->set_label("");
         }
     }
     else{
         links.insert(links.begin(),1,new Wire(this,destination));
+        this->set_label(label);
     }
 }
 
-void Port::outlink(Port* destination){
+void Port::outlink(Port* destination, char* label){
     int pos = check_existing_link(links,destination);
             if(pos >= 0){
                 links.erase(links.begin()+pos);
+                this->set_label("");
             }
             else{
                 links.insert(links.begin(), 1, new Wire(this,destination));
+                this->set_label(label);
             }
 }
 
-void Port::link(Port* destination) {
+void Port::link(Port* destination, char* label) {
         const PortType dtype = destination->type;
 
         if (((type == SIGNAL_INPUT_PORT) && (dtype == SIGNAL_OUTPUT_PORT)) || ((type == VALUE_INPUT_PORT) && (dtype == VALUE_OUTPUT_PORT))) {
-            inlink(destination);
+            inlink(destination, label);
         }
         if (((dtype == SIGNAL_INPUT_PORT) && (type == SIGNAL_OUTPUT_PORT)) || ((dtype == VALUE_INPUT_PORT) && (type == VALUE_OUTPUT_PORT))) {
-            outlink(destination);
+            outlink(destination, label);
         }
     };
 
@@ -110,3 +139,34 @@ void ComponentEffective::place(Gtk::Container* slot){
 
 }
 
+
+
+
+
+
+component* match_component(ComponentType type, int id){
+    if (type == SIGNAL_COMPONENT){
+        if(id == 0) {return (new sinusoidal_component());}
+        if(id == 1) {return (new square_component());}
+        if(id == 2) {return (new triangle_component());}
+        if(id == 3) {return (new sawtooth_component());}
+    }
+    if (type == FILTER_COMPONENT){
+    }
+    if (type == OPERATOR_COMPONENT){
+        if(id == 0) {return (new sum_component());}
+        if(id == 1) {return (new sub_component());}
+        if(id == 2) {return (new prod_component());}
+        if(id == 3) {return (new div_component());}
+        if(id == 4) {return (new derivative_component());}
+        if(id == 5) {return (new normalize_component());}
+        if(id == 6) {return (new primitive_component());}
+    }
+    if (type == OTHER_COMPONENT){
+        if(id == 0) {return (new constant_component(0.0));}
+    }
+    return new constant_component(0.0);
+
+}
+
+void test(char* text){ std::cout << text;}

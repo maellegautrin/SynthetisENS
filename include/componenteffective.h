@@ -19,6 +19,8 @@
 
 namespace synthetisens{
 
+
+
 typedef enum {
     SIGNAL_INPUT_PORT,
     SIGNAL_OUTPUT_PORT,
@@ -29,6 +31,10 @@ typedef enum {
 
 typedef class Port Port;
 typedef class ComponentEffective ComponentEffective;
+
+    extern Port* last_clicked;
+    extern int port_label;
+    extern char* label_space;
 
 class Wire : public Gtk::Widget {
     public:
@@ -43,12 +49,13 @@ class Port : public Gtk::Button {
     public:
     
     Port(PortType type);
+    void click_handler();
 
     const PortType type;    
     std::vector<Wire*> links;
-    void link(Port* destination);
-    void outlink(Port* destination);
-    void inlink(Port* destination);
+    void link(Port* destination, char* label);
+    void outlink(Port* destination, char* label);
+    void inlink(Port* destination, char* label);
 
 };
 
@@ -75,6 +82,11 @@ class ComponentEffective : public Gtk::Grid {
 
 };
 
+
 };
+
+
+
+
 
 #endif

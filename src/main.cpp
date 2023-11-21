@@ -1,5 +1,11 @@
 // Forcing OS to linux (useful for Stk)
+#include "gdkmm/dragcontext.h"
+#include "gdkmm/types.h"
 #include "gtkmm/enums.h"
+#include "gtkmm/iconset.h"
+#include "gtkmm/selectiondata.h"
+#include "gtkmm/targetentry.h"
+#include "gtkmm/widget.h"
 #define __OS_LINUX__
 
 #define sine_id 1
@@ -107,7 +113,7 @@ void layout_setup(){
   components_frame->add(*components);
   workspace_frame->add(*workspace);
 
-  sigs->set_size_request(250,200);
+  sigs->set_size_request(375,400);
   synth_grid->set_size_request(900,600);
 
 
@@ -132,6 +138,50 @@ synthetisens::ComponentSelector** other_list;
 /*--------------------GRID--------------------*/
 Frame* synth_grid_quartering[COLUMNS][LINES];
 
+/*--------------------------------------------*/
+/*-----------------DRAG&DROP------------------
+enum {
+    TARGET_COMPONENT_TYPE,
+    TARGET_COMPONENT_ID,
+    TARGET_IMG_LINK
+};
+
+std::vector<TargetEntry> target_list = {
+  TargetEntry("TYPE", TARGET_SAME_APP,TARGET_COMPONENT_TYPE),
+  TargetEntry("ID",TARGET_SAME_APP,TARGET_COMPONENT_ID),
+  TargetEntry("IMG",TARGET_SAME_APP,TARGET_IMG_LINK)
+};
+
+void drag_data_received_handl(Widget* widget, GdkDragContext *context, gint x, gint y, SelectionData *selection_data, guint target_type, guint time, gpointer data){
+
+
+    std::cout << "Destination " << 1 << ": Received data for the '" << selection_data->get_target() << "' target." << endl;
+
+}
+
+
+
+
+void drag_and_drop_destination_setup(Widget* destination){
+  destination->drag_dest_set(target_list, DEST_DEFAULT_ALL, Gdk::ACTION_COPY);
+
+
+  destination->signal_connect("drag-data-received", G_CALLBACK(drag_data_received_handl), NULL);
+  /*g_signal_connect(*destination, "drag-leave", G_CALLBACK (drag_leave_handl), NULL);
+  g_signal_connect(*destination, "drag-motion", G_CALLBACK (drag_motion_handl), NULL);
+  g_signal_connect(*destination, "drag-drop", G_CALLBACK (drag_drop_handl), NULL);*//*
+
+}
+
+void drag_and_drop_source_setup(Widget* source){
+  source->drag_source_set(target_list,Gdk::BUTTON1_MASK,Gdk::ACTION_COPY);
+
+
+  g_signal_connect(source, "drag-data-get", G_CALLBACK (drag_data_get_handl), NULL);
+  g_signal_connect(source, "drag-data-delete", G_CALLBACK (drag_data_delete_handl), NULL);
+  g_signal_connect(source, "drag-begin", G_CALLBACK (drag_begin_handl), NULL);
+  g_signal_connect(source, "drag-end", G_CALLBACK (drag_end_handl), NULL);*/
+}
 /*--------------------------------------------*/
 
 
@@ -168,13 +218,19 @@ int main(int argc, char *argv[])
       synth_grid_quartering[i][j] = new Frame();
       synth_grid_quartering[i][j]->set_size_request(150,100);
       synth_grid->attach(*synth_grid_quartering[i][j],i,j,1,1);
+      
     }
   }
 
-
+  /*synthetisens::last_clicked = NULL;
+  int synthetisens::port_label = 0;
+  char* synthetisens::label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";*/
   synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentSelector* square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
   synthetisens::ComponentSelector* triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
+
+  //drag_and_drop_destination_setup(synth_grid_quartering[0][0]);
+  //drag_and_drop_source_setup(sine_selector);
 
   Gtk::Frame* sine_frame = new Frame();
   sine_frame->add(*sine_selector);
@@ -185,7 +241,7 @@ int main(int argc, char *argv[])
 
   sig_grid->attach(*sine_frame,0,0,1,1);
   sig_grid->attach_next_to(*square_frame,*sine_frame,POS_RIGHT,1,1);
-  sig_grid->attach_next_to(*triangle_frame,*sine_frame,POS_BOTTOM,1,1);
+  sig_grid->attach_next_to(*triangle_frame,*square_frame,POS_RIGHT,1,1);
 
 
 

@@ -19,7 +19,6 @@ namespace synthetisens {
 
   typedef class component component_t; // typedef for input_port
 
-  component* match_component(ComponentType type, int id);
 
   enum port_type {
     SIGNAL,

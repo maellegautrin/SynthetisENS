@@ -6,9 +6,10 @@
 using namespace synthetisens;
 
 ComponentSelector::ComponentSelector(char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
+    this->set_size_request(125,125);
     this->img = new Gtk::Image(imglink);
     this->img->set_valign(Gtk::ALIGN_CENTER);
     this->img->set_halign(Gtk::ALIGN_CENTER);
-    this->add(*(this->img)); 
-    this->set_size_request(125,125);
+    this->set_center_widget(*(this->img)); 
+    
 }
