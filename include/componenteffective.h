@@ -32,9 +32,7 @@ typedef enum {
 typedef class Port Port;
 typedef class ComponentEffective ComponentEffective;
 
-    extern Port* last_clicked;
-    extern int port_label;
-    extern char* label_space;
+
 
 class Wire : public Gtk::Widget {
     public:
@@ -48,14 +46,18 @@ class Wire : public Gtk::Widget {
 class Port : public Gtk::Button {
     public:
     
-    Port(PortType type);
+    Port(PortType type, ComponentEffective* parent);
     void click_handler();
 
-    const PortType type;    
+    const PortType type;
     std::vector<Wire*> links;
     void link(Port* destination, char* label);
     void outlink(Port* destination, char* label);
     void inlink(Port* destination, char* label);
+
+    private:
+
+    ComponentEffective* parent;
 
 };
 

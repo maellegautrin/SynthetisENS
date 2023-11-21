@@ -36,6 +36,11 @@ using namespace stk;
 using namespace Gtk;
 using namespace std;
 
+//Port label variables
+synthetisens::Port* last_clicked;
+int port_label;
+char* label_space;
+
 // Gtk components
 Window* window;
 Box* box;
@@ -181,7 +186,7 @@ void drag_and_drop_source_setup(Widget* source){
   g_signal_connect(source, "drag-data-delete", G_CALLBACK (drag_data_delete_handl), NULL);
   g_signal_connect(source, "drag-begin", G_CALLBACK (drag_begin_handl), NULL);
   g_signal_connect(source, "drag-end", G_CALLBACK (drag_end_handl), NULL);*/
-}
+
 /*--------------------------------------------*/
 
 
@@ -222,9 +227,9 @@ int main(int argc, char *argv[])
     }
   }
 
-  /*synthetisens::last_clicked = NULL;
-  int synthetisens::port_label = 0;
-  char* synthetisens::label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";*/
+  last_clicked = NULL;
+  port_label = 0;
+  label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentSelector* square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
   synthetisens::ComponentSelector* triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);

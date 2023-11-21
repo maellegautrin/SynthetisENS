@@ -7,6 +7,7 @@
 #include "gtkmm/widget.h"
 #include "gtkmm/image.h"
 #include "gtkmm/box.h"
+#include <cstring>
 #include <iostream>
 #include <list>
 #include <string>
@@ -14,7 +15,12 @@
 
 
 
+
 using namespace synthetisens;
+
+    extern Port* last_clicked;
+    extern int port_label;
+    extern char* label_space;
 
 
 component* match_component(ComponentType type, int id);
@@ -23,28 +29,27 @@ component* match_component(ComponentType type, int id);
 Wire::Wire(Port* source, Port* destination) : source(source), destination(destination) {
 
 
-
 }
 
-void Port::click_handler(){}
-/*    if (!last_clicked) {
+void Port::click_handler(){
+    if (!last_clicked) {
         last_clicked = this;
     }
     else{
         char* label = &(label_space[port_label]);
-        port_label = (port_label + 1) % (sizeof(label_space)/sizeof(char));  
+        port_label = (port_label + 1) % strlen(label_space);  
         this->link(last_clicked,label);
         last_clicked->link(this,label);
         last_clicked = NULL;
-    }
+    
+}
+}
 
-}*/
-
-Port::Port(PortType type) : type(type) {
+Port::Port(PortType type, ComponentEffective* parent) : type(type), parent(parent) {
 
     links = std::vector<Wire*>();
     this->set_label("");
-    //this->signal_clicked().connect(sigc::ptr_fun(&synthetisens::Port::click_handler));
+    this->signal_clicked().connect(sigc::mem_fun(*this, &Port::click_handler));
 
 }
 
@@ -103,23 +108,24 @@ ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int co
 
 
     input_ports = new Port*[virtual_component->num_inputs];
-    for (int i = 0; i < virtual_component->num_inputs; i++){
-        input_ports[i] = new Port(SIGNAL_INPUT_PORT);
+    for (int i = 0; i < (virtual_component->num_inputs + virtual_component->num_parameters); i++){
+        input_ports[i] = new Port(SIGNAL_INPUT_PORT,this);
     }
     output_ports = new Port*[virtual_component->num_outputs];
     for (int i = 0; i < virtual_component->num_outputs; i++){
-        output_ports[i] = new Port(SIGNAL_OUTPUT_PORT);
+        output_ports[i] = new Port(SIGNAL_OUTPUT_PORT,this);
     }
 
 }
 
 void ComponentEffective::place(Gtk::Container* slot){
-    const int m = MAX(virtual_component->num_inputs, virtual_component->num_outputs);
-    if (virtual_component->num_inputs > 0){     //on attache les ports d'entrées à gauche de l'image du composant, les uns aux dessus des autres
-        const int h = m/virtual_component->num_inputs;
+    const int num_inputs = virtual_component->num_inputs + virtual_component->num_parameters;
+    const int m = MAX(num_inputs, virtual_component->num_outputs);
+    if (num_inputs > 0){     //on attache les ports d'entrées à gauche de l'image du composant, les uns aux dessus des autres
+        const int h = m/num_inputs;
         this->attach(*this->input_ports[0],0,0,1,h);
         this->attach_next_to(*this->box,*this->input_ports[0],Gtk::POS_RIGHT,1,m);
-        for(int n = 1; n < virtual_component->num_inputs; n++){
+        for(int n = 1; n < num_inputs; n++){
             this->attach_next_to(*this->input_ports[n],*this->input_ports[n-1],Gtk::POS_BOTTOM,1,h);
         }
     }
