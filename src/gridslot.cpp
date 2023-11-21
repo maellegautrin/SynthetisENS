@@ -1,5 +1,7 @@
 #include "gridslot.h"
+#include "componenteffective.h"
 #include "componentselector.h"
+#include "gtkmm/bin.h"
 #include "gtkmm/button.h"
 #include "gtkmm/grid.h"
 #include <iostream>
@@ -11,9 +13,9 @@ extern ComponentSelector* current_selector;
 
 void GridSlot::click_handler(){
   if(current_selector != NULL){
-    std::cout << "caca";
-    this->remove();
-    this->add(*current_selector);
+    std::cout << "hugo";
+    ComponentEffective* new_component = new ComponentEffective(current_selector->imglink, current_selector->type, current_selector->component_id);
+    new_component->place(this);
     current_selector = NULL;
   }
 }
