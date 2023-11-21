@@ -48,8 +48,8 @@ namespace synthetisens {
       const int num_parameters;
       const int num_outputs;
 
-      Component(int num_inputs, int num_parameters, int num_outputs);
-      ~Component();
+      component(int num_inputs, int num_parameters, int num_outputs);
+      ~component();
 
       void connect_input(int input_num, component& input, int port_sender);
       void disconnect_input(int input_num);

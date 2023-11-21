@@ -68,9 +68,9 @@ ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int co
     this->add(*(this->img)); 
     this->set_size_request(125,125);
 
-    component = new sinusoidal_component(440,1,0);
+    virtual_component = new sinusoidal_component();
 
-    input_ports = new Port*[component->num_inputs];
-    output_ports = new Port*[component->num_outputs];
+    input_ports = new Port*[virtual_component->num_inputs];
+    output_ports = new Port*[virtual_component->num_outputs];
 
 }

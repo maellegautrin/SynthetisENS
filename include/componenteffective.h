@@ -66,7 +66,7 @@ class ComponentEffective : public Gtk::Box {
     private:
 
     Gtk::Image* img;
-    Component* component;
+    component* virtual_component;
     Port** input_ports;
     Port** output_ports;
 
