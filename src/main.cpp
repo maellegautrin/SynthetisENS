@@ -7,6 +7,9 @@
 #define sawtooth_id 3
 #define blit_id 4
 
+#define LINES 6
+#define COLUMNS 6
+
 
 
 #include <gtkmm.h>
@@ -105,7 +108,7 @@ void layout_setup(){
   workspace_frame->add(*workspace);
 
   sigs->set_size_request(250,200);
-  synth_grid->set_size_request(800,600);
+  synth_grid->set_size_request(900,600);
 
 
   menubar->append(*file);
@@ -126,6 +129,11 @@ synthetisens::ComponentSelector** filter_list;
 synthetisens::ComponentSelector** operator_list;
 synthetisens::ComponentSelector** other_list;
 /*--------------------------------------------*/
+/*--------------------GRID--------------------*/
+Frame* synth_grid_quartering[COLUMNS][LINES];
+
+/*--------------------------------------------*/
+
 
 
 
@@ -152,6 +160,17 @@ int main(int argc, char *argv[])
   window->set_title("synthetisENS");
 
   layout_setup();
+  //synth_grid_setup();
+
+  auto synth_grid_quartering = new Frame* [COLUMNS][LINES] ;
+  for(int i = 0; i < COLUMNS; i++){
+    for(int j = 0; j < LINES; j++){
+      synth_grid_quartering[i][j] = new Frame();
+      synth_grid_quartering[i][j]->set_size_request(150,100);
+      synth_grid->attach(*synth_grid_quartering[i][j],i,j,1,1);
+    }
+  }
+
 
   synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentSelector* square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
@@ -172,8 +191,10 @@ int main(int argc, char *argv[])
 
 
   synthetisens::ComponentEffective* sine_eff = new synthetisens::ComponentEffective("sine.png",synthetisens::SIGNAL_COMPONENT,0);
+  synthetisens::ComponentEffective* sum_eff = new synthetisens::ComponentEffective("sum.png",synthetisens::OPERATOR_COMPONENT,0);
 
-  synth_grid->attach(*sine_eff,1,1,1,1);
+  sine_eff->place(synth_grid_quartering[3][2]);
+  sum_eff->place(synth_grid_quartering[1][4]);
 
   /*box = new Box(ORIENTATION_VERTICAL);
 

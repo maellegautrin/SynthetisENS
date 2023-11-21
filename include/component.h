@@ -11,12 +11,15 @@
 #ifndef _Component_H
 #define _Component_H
 
+#include "componentselector.h"
 #include "signal.h"
 #include <vector>
 
 namespace synthetisens {
 
   typedef class component component_t; // typedef for input_port
+
+  component* match_component(ComponentType type, int id);
 
   enum port_type {
     SIGNAL,
@@ -131,6 +134,10 @@ namespace synthetisens {
       constant_component(double value);
       output_value& generate_output(int output) override;
   };
+
+
 }
+
+
 
 #endif // _Component_H

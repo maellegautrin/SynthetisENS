@@ -5,6 +5,9 @@
 
 #include "component.h"
 #include "componentselector.h"
+#include "gtkmm/grid.h"
+#include "gtkmm/container.h"
+#include "gtkmm/button.h"
 #include "gtkmm/widget.h"
 #include "gtkmm/image.h"
 #include "gtkmm/box.h"
@@ -36,10 +39,10 @@ class Wire : public Gtk::Widget {
 
 };
 
-class Port : public Gtk::Image {
+class Port : public Gtk::Button {
     public:
     
-    Port(PortType type, ComponentEffective* parent);
+    Port(PortType type);
 
     const PortType type;    
     std::vector<Wire*> links;
@@ -47,16 +50,14 @@ class Port : public Gtk::Image {
     void outlink(Port* destination);
     void inlink(Port* destination);
 
-    private:
-
-    ComponentEffective* parent;
-    Wire* wire(Port* destination);
 };
 
-class ComponentEffective : public Gtk::Box {
+class ComponentEffective : public Gtk::Grid {
     public:
 
     ComponentEffective(char* img, ComponentType type, int component_id);
+
+    void place(Gtk::Container* slot);
 
     const int component_id;
     const ComponentType type;
@@ -65,6 +66,7 @@ class ComponentEffective : public Gtk::Box {
 
     private:
 
+    Gtk::Box* box;
     Gtk::Image* img;
     component* virtual_component;
     Port** input_ports;

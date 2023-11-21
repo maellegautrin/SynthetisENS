@@ -1,4 +1,5 @@
 #include "component.h"
+#include "componentselector.h"
 #include <cmath>
 
 using namespace synthetisens;
@@ -211,5 +212,31 @@ output_value& constant_component::generate_output(int output) {
   output_value->type = VALUE;
   output_value->value.parameter = this->value;
   return *output_value;
+
+
 }
 
+
+component* match_component(ComponentType type, int id){
+  if (type == SIGNAL_COMPONENT){
+    if(id == 0) {return (new sinusoidal_component());}
+    if(id == 1) {return (new square_component());}
+    if(id == 2) {return (new triangle_component());}
+    if(id == 3) {return (new sawtooth_component());}
+  }
+  if (type == FILTER_COMPONENT){
+  }
+  if (type == OPERATOR_COMPONENT){
+    if(id == 0) {return (new sum_component());}
+    if(id == 1) {return (new sub_component());}
+    if(id == 2) {return (new prod_component());}
+    if(id == 3) {return (new div_component());}
+    if(id == 4) {return (new derivative_component());}
+    if(id == 5) {return (new normalize_component());}
+    if(id == 6) {return (new primitive_component());}
+  }
+  if (type == OTHER_COMPONENT){
+    if(id == 0) {return (new constant_component(0.0));}
+  }
+  return new constant_component(0.0);
+}
