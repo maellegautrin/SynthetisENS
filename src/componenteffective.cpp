@@ -139,14 +139,15 @@ int ComponentEffective::port_position(Port* port) {
       for (int i = 0; i < virtual_component->num_inputs + virtual_component->num_parameters; i++){
         if (input_ports[i] == port) {return i;}
       }
-      return 0;
+      break;
     case SIGNAL_OUTPUT_PORT:
     case VALUE_OUTPUT_PORT:
       for (int i = 0; i < virtual_component->num_outputs; i++){
         if (output_ports[i] == port) {return i;}
       }
-      return 0;
+      break;
   }
+  return 0;
 }
 
 ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {

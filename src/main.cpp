@@ -61,6 +61,10 @@ int wave = sine_id;
 
 RtWvOut* dac;
 
+void play_sound();
+
+synthetisens::component* speaker;
+
 /*-----------------INTERFACE------------------*/
 // DELCARATIONS
 
@@ -81,6 +85,8 @@ RtWvOut* dac;
   Notebook* workspace;
   MenuBar* menubar;
   MenuItem* file;
+  Menu* file_menu;
+  MenuItem* play;
   MenuItem* edit;
   MenuItem* view;
 
@@ -103,6 +109,8 @@ void layout_setup(){
   workspace = new Notebook();
   menubar = new MenuBar();
   file = new MenuItem("file");
+  file_menu = new Menu();
+  play = new MenuItem("play");
   edit = new MenuItem("edit");
   view = new MenuItem("view");
 
@@ -125,6 +133,9 @@ void layout_setup(){
   sigs->set_size_request(375,400);
   synth_grid->set_size_request(900,600);
 
+  play->signal_activate().connect(sigc::ptr_fun(&play_sound));
+  file_menu->append(*play);
+  file->set_submenu(*file_menu);
 
   menubar->append(*file);
   menubar->append(*edit);
@@ -206,7 +217,6 @@ void on_clicked_slot(){
 
 
 // Function prototypes
-void play_sound();
 void set_sine();
 void set_square();
 void set_saw();
@@ -224,6 +234,8 @@ int main(int argc, char *argv[])
   window = new Window();
   window->set_default_size(1500, 1000);
   window->set_title("synthetisENS");
+
+  speaker = new synthetisens::speaker_component();
 
   layout_setup();
   //synth_grid_setup();
@@ -368,18 +380,20 @@ void set_blit(){
 void play_sound()
 {
   dac = new RtWvOut( 1 );
-  synthetisens::component* freq = new synthetisens::constant_component(440);
-  synthetisens::component* ampl = new synthetisens::constant_component(1);
-  synthetisens::component* phase = new synthetisens::constant_component(0);
-  
-  synthetisens::component* c1 = new synthetisens::sinusoidal_component();
-  c1->connect_input(0, *freq, 0);
-  c1->connect_input(1, *ampl, 0);
-  c1->connect_input(2, *phase, 0);
+  // synthetisens::component* freq = new synthetisens::constant_component(440);
+  // synthetisens::component* ampl = new synthetisens::constant_component(1);
+  // synthetisens::component* phase = new synthetisens::constant_component(0);
+  // 
+  // synthetisens::component* c1 = new synthetisens::sinusoidal_component();
+  // c1->connect_input(0, *freq, 0);
+  // c1->connect_input(1, *ampl, 0);
+  // c1->connect_input(2, *phase, 0);
 
-  synthetisens::signal* sine = c1->generate_output(0).value.signal;
+  // synthetisens::signal* sine = c1->generate_output(0).value.signal;
 
-  for (int i = 0; i < duration->get_value(); i++) dac->tick(sine->tick());
+  synthetisens::signal* sig = speaker->generate_output(0).value.signal;
+
+  for (int i = 0; i < 50000; i++) dac->tick(sig->tick());
 
   delete dac;
 }
