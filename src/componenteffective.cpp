@@ -62,14 +62,21 @@ int check_existing_link(std::vector<Wire*> links, Port* destination) {
 
 void Port::inlink(Port* destination, char* label){
     if(links.size() > 0){
-        if(links[0]->destination == destination){
-            links.erase(links.begin());
-            this->set_label("");
+
+        links.erase(links.begin());
+        this->set_label("");
+        this->parent->virtual_component->disconnect_input(this->parent->port_position(this));
+
+        if(links[0]->destination != destination){
+          links.insert(links.begin(),1,new Wire(this,destination));
+          this->set_label(strcat(this->get_label(), label));
+          this->parent->virtual_component->connect_input(this->parent->port_position(this), *destination->parent->virtual_component, destination->parent->port_position(destination));
         }
     }
     else{
-        links.insert(links.begin(),1,new Wire(this,destination));
-        this->set_label(label);
+      links.insert(links.begin(),1,new Wire(this,destination));
+      this->set_label(strcat(this->get_label(), label));
+      this->parent->virtual_component->connect_input(this->parent->port_position(this), *destination->parent->virtual_component, destination->parent->port_position(destination));
     }
 }
 
@@ -94,7 +101,24 @@ void Port::link(Port* destination, char* label) {
         if (((dtype == SIGNAL_INPUT_PORT) && (type == SIGNAL_OUTPUT_PORT)) || ((dtype == VALUE_INPUT_PORT) && (type == VALUE_OUTPUT_PORT))) {
             outlink(destination, label);
         }
-    };
+    }
+
+int ComponentEffective::port_position(Port* port) {
+  switch (port->type){
+    case SIGNAL_INPUT_PORT:
+    case VALUE_INPUT_PORT:
+      for (int i = 0; i < virtual_component->num_inputs + virtual_component->num_parameters; i++){
+        if (input_ports[i] == port) {return i;}
+      }
+      return 0;
+    case SIGNAL_OUTPUT_PORT:
+    case VALUE_OUTPUT_PORT:
+      for (int i = 0; i < virtual_component->num_outputs; i++){
+        if (output_ports[i] == port) {return i;}
+      }
+      return 0;
+  }
+}
 
 ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
 
@@ -106,8 +130,7 @@ ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int co
 
     virtual_component = match_component(type, component_id);
 
-
-    input_ports = new Port*[virtual_component->num_inputs];
+    input_ports = new Port*[virtual_component->num_inputs + virtual_component->num_parameters];
     for (int i = 0; i < (virtual_component->num_inputs + virtual_component->num_parameters); i++){
         input_ports[i] = new Port(SIGNAL_INPUT_PORT,this);
     }
