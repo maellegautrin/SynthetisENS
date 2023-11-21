@@ -219,11 +219,19 @@ component* match_component(ComponentType type, int id){
         if(id == 2) {return (new prod_component());}
         if(id == 3) {return (new div_component());}
         if(id == 4) {return (new derivative_component());}
-        if(id == 5) {return (new normalize_component());}
-        if(id == 6) {return (new primitive_component());}
+        if(id == 5) {return (new primitive_component());}
+        if(id == 6) {return (new normalize_component());}
+
     }
     if (type == OTHER_COMPONENT){
-        if(id == 0) {return (new constant_component(0.0));}
+        if(id == 0) {return (new speaker_component());}
+        if(id == 1) {return (new constant_component(0.0));}
+        if(id == 2) {return (new constant_component(0.0));}
+        if(id == 3) {return (new constant_component(0.0));}
+        if(id == 4) {return (new constant_component(0.0));}
+        if(id == 5) {return (new constant_component(1.0));}
+        if(id == 6) {return (new constant_component(440.0));}
+        if(id == 7) {return (new constant_component(880.0));}
     }
     return new constant_component(0.0);
 

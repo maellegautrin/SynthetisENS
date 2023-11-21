@@ -203,9 +203,84 @@ void drag_and_drop_source_setup(Widget* source){
   g_signal_connect(source, "drag-end", G_CALLBACK (drag_end_handl), NULL);*/
 
 /*--------------------------------------------*/
-/*-------------TEMPORARY SELECTORS------------*/
+/*-----------------SELECTORS------------------*/
 
-void on_clicked_slot(){
+//SIGNALS
+synthetisens::ComponentSelector* sine_selector;
+synthetisens::ComponentSelector* square_selector;
+synthetisens::ComponentSelector* triangle_selector;
+synthetisens::ComponentSelector* sawtooth_selector;
+//FILTERS
+
+//OPERATORS
+synthetisens::ComponentSelector* sum_selector;
+synthetisens::ComponentSelector* sub_selector;
+synthetisens::ComponentSelector* prod_selector;
+synthetisens::ComponentSelector* div_selector;
+synthetisens::ComponentSelector* derivative_selector;
+synthetisens::ComponentSelector* primitive_selector;
+synthetisens::ComponentSelector* normalize_selector;
+//OTHER
+synthetisens::ComponentSelector* speaker_selector;
+synthetisens::ComponentSelector* keyboard_selector;
+synthetisens::ComponentSelector* knob_selector;
+synthetisens::ComponentSelector* slider_selector;
+synthetisens::ComponentSelector* const0_selector;
+synthetisens::ComponentSelector* const1_selector;
+synthetisens::ComponentSelector* const440_selector;
+synthetisens::ComponentSelector* const880_selector;
+
+
+void selector_setup(){
+  //SIGNALS
+  sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
+  square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
+  triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
+  sawtooth_selector = new synthetisens::ComponentSelector("sawtooth.png",synthetisens::SIGNAL_COMPONENT,3);
+  //FILTERS André?
+
+  //OPERATORS
+  sum_selector = new synthetisens::ComponentSelector("sum.png",synthetisens::OPERATOR_COMPONENT,0);
+  sub_selector = new synthetisens::ComponentSelector("sub.png",synthetisens::OPERATOR_COMPONENT,1);
+  prod_selector = new synthetisens::ComponentSelector("product.png",synthetisens::OPERATOR_COMPONENT,2);
+  div_selector = new synthetisens::ComponentSelector("div.png",synthetisens::OPERATOR_COMPONENT,3);
+  derivative_selector = new synthetisens::ComponentSelector("derivative.png",synthetisens::OPERATOR_COMPONENT,4);
+  primitive_selector = new synthetisens::ComponentSelector("primitive.png",synthetisens::OPERATOR_COMPONENT,5);
+  normalize_selector = new synthetisens::ComponentSelector("normalize.png",synthetisens::OPERATOR_COMPONENT,6);
+  //OTHER
+  speaker_selector = new synthetisens::ComponentSelector("speaker.png",synthetisens::OTHER_COMPONENT,0);
+  keyboard_selector = new synthetisens::ComponentSelector("keyboard.png",synthetisens::OTHER_COMPONENT,1);
+  knob_selector = new synthetisens::ComponentSelector("knob.png",synthetisens::OTHER_COMPONENT,2);
+  slider_selector = new synthetisens::ComponentSelector("slider.png",synthetisens::OTHER_COMPONENT,3);
+  const0_selector = new synthetisens::ComponentSelector("const0.png",synthetisens::OTHER_COMPONENT,4);
+  const1_selector = new synthetisens::ComponentSelector("const1.png",synthetisens::OTHER_COMPONENT,5);
+  const440_selector = new synthetisens::ComponentSelector("const440.png",synthetisens::OTHER_COMPONENT,6);
+  const880_selector = new synthetisens::ComponentSelector("const880.png",synthetisens::OTHER_COMPONENT,7);
+
+
+  sig_grid->attach(*sine_selector,1,1,1,1);
+  sig_grid->attach(*square_selector,2,1,1,1);
+  sig_grid->attach(*triangle_selector,3,1,1,1);
+  sig_grid->attach(*sawtooth_selector,1,2,1,1);
+
+  //filter_grid->attach
+
+  operator_grid->attach(*sum_selector,1,1,1,1);
+  operator_grid->attach(*sub_selector,2,1,1,1);
+  operator_grid->attach(*prod_selector,3,1,1,1);
+  operator_grid->attach(*div_selector,1,2,1,1);
+  operator_grid->attach(*derivative_selector,2,2,1,1);
+  operator_grid->attach(*primitive_selector,3,2,1,1);
+  operator_grid->attach(*normalize_selector,1,3,1,1);
+
+  other_grid->attach(*speaker_selector,1,1,1,1);
+  other_grid->attach(*keyboard_selector,2,1,1,1);
+  other_grid->attach(*knob_selector,3,1,1,1);
+  other_grid->attach(*slider_selector,1,2,1,1);
+  other_grid->attach(*const0_selector,2,2,1,1);
+  other_grid->attach(*const1_selector,3,2,1,1);
+  other_grid->attach(*const440_selector,1,3,1,1);
+  other_grid->attach(*const880_selector,2,3,1,1);
 
 }
 
@@ -239,6 +314,7 @@ int main(int argc, char *argv[])
 
   layout_setup();
   //synth_grid_setup();
+  selector_setup();
 
   auto synth_grid_quartering = new Frame* [COLUMNS][LINES] ;
   for(int i = 0; i < COLUMNS; i++){
@@ -253,7 +329,7 @@ int main(int argc, char *argv[])
   label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   current_selector = NULL;
 
-  synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
+  /*synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
   synthetisens::ComponentSelector* square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
   synthetisens::ComponentSelector* triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
 
@@ -270,6 +346,7 @@ int main(int argc, char *argv[])
   sig_grid->attach(*sine_frame,0,0,1,1);
   sig_grid->attach_next_to(*square_frame,*sine_frame,POS_RIGHT,1,1);
   sig_grid->attach_next_to(*triangle_frame,*square_frame,POS_RIGHT,1,1);
+  */
 
 
 
