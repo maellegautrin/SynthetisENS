@@ -60,6 +60,12 @@ namespace synthetisens {
       virtual output_value& generate_output(int port) = 0;
   };
 
+  class speaker_component : public component {
+    public:
+      speaker_component();
+      output_value& generate_output(int output) override;
+  };
+
   class sinusoidal_component : public component {
     public:
       sinusoidal_component();

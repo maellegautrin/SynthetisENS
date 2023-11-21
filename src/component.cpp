@@ -59,6 +59,16 @@ port_type component::get_port_type(int port_num) const {
   return VALUE;
 }
 
+speaker_component::speaker_component() : component(1, 0, 0) {}
+
+output_value& speaker_component::generate_output(int output) {
+  signal** inputs = get_input_signals();
+  output_value* output_value = new synthetisens::output_value;
+  output_value->type = SIGNAL;
+  output_value->value.signal = inputs[0];
+  return *output_value;
+}
+
 sinusoidal_component::sinusoidal_component() : component(0, 3, 1) {}
 
 output_value& sinusoidal_component::generate_output(int output) {
