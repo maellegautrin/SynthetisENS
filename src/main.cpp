@@ -77,7 +77,7 @@ synthetisens::component* speaker;
   Grid* operator_grid;
   ScrolledWindow* other;
   Grid* other_grid;
-  DrawingArea* keyboard;
+  Box* keyboard;
   Frame* components_frame;
   Frame* workspace_frame;
   Grid* synth_grid;
@@ -101,7 +101,7 @@ void layout_setup(){
   operator_grid = new Grid();
   other = new ScrolledWindow();
   other_grid = new Grid();
-  keyboard = new DrawingArea();
+  keyboard = new Box();
   components_frame = new Frame("components");
   workspace_frame = new Frame("workspace");
   synth_grid = new Grid();
@@ -113,6 +113,10 @@ void layout_setup(){
   play = new MenuItem("play");
   edit = new MenuItem("edit");
   view = new MenuItem("view");
+
+
+  Image* keyboardimg = new Image("WIP.png");
+  keyboard->add(*keyboardimg);
 
   components->append_page(*sigs, "signals");
   components->append_page(*filters, "filters");
@@ -144,6 +148,7 @@ void layout_setup(){
   main_grid->attach(*menubar,0,0,3,1);
   main_grid->attach_next_to(*components_frame,*menubar,POS_BOTTOM,3,3);
   main_grid->attach_next_to(*workspace_frame,*components_frame,POS_RIGHT,3,3);
+
 };
 
 
