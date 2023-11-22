@@ -12,7 +12,7 @@ void ComponentSelector::click_handler(){
   current_selector = this;
 }
 
-ComponentSelector::ComponentSelector(char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
+ComponentSelector::ComponentSelector(const char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
   this->set_size_request(125,125);
   this->img = new Gtk::Image(imglink);
   this->img->set_valign(Gtk::ALIGN_CENTER);

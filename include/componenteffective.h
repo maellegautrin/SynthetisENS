@@ -55,14 +55,14 @@ namespace synthetisens{
       Port** output_ports;
 
     public:
-      ComponentEffective(char* img, ComponentType type, int component_id);
+      ComponentEffective(const char* img, ComponentType type, int component_id);
 
       void place(Gtk::Frame* slot);
 
       const int component_id;
       const ComponentType type;
       component* virtual_component;
-      char* imglink;
+      const char* imglink;
 
       int port_position(Port* port);
   };

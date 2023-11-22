@@ -40,7 +40,7 @@ using namespace std;
 //Port label variables
 synthetisens::Port* last_clicked;
 int port_label;
-char* label_space;
+const char* label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 //Selector variables
 synthetisens::ComponentSelector* current_selector;
@@ -331,7 +331,6 @@ int main(int argc, char *argv[])
 
   last_clicked = NULL;
   port_label = 0;
-  label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   current_selector = NULL;
 
   /*synthetisens::ComponentSelector* sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);

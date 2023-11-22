@@ -143,7 +143,7 @@ int ComponentEffective::port_position(Port* port) {
   return 0;
 }
 
-ComponentEffective::ComponentEffective(char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
+ComponentEffective::ComponentEffective(const char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
   this->box = new Gtk::Box();
   this->img = new Gtk::Image(imglink);
   this->img->set_valign(Gtk::ALIGN_CENTER);

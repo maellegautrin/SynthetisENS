@@ -21,12 +21,12 @@ namespace synthetisens {
       Gtk::Image* img;
 
     public:
-      ComponentSelector(char* imglink, ComponentType type, int component_id);
+      ComponentSelector(const char* imglink, ComponentType type, int component_id);
       void click_handler();
 
       const int component_id;
       const ComponentType type;
-      char* imglink;
+      const char* imglink;
   };
 }
 #endif
