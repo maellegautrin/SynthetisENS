@@ -20,7 +20,12 @@ signal::~signal() {
 }
 
 double signal::get_value(int position) const {
-  if (position < 0 || position >= this->size) return this->loop ? this->values[position % size] : 0;
+  if (position < 0 || position >= this->size) {
+    if (!this->loop) return 0;
+    int pos = position % this->size;
+    if (pos < 0) pos += this->size;
+    return this->values[pos];
+  }
   return this->values[position];
 }
 
@@ -106,8 +111,8 @@ signal& derivative(const signal& sig) {
 
   values[0] = (sig.get_value(1) - sig.get_value(0)) * SAMPLE_FREQ;
   values[size - 1] = (sig.get_value(size - 1) - sig.get_value(size - 2)) * SAMPLE_FREQ;
-  for (int i = 1; i < size-1; i++) {
-    values[i] = (sig.get_value(i + 1) - sig.get_value(i - 2)) * SAMPLE_FREQ / 2.0;
+  for (int i = 1; i < size - 1; i++) {
+    values[i] = (sig.get_value(i + 1) - sig.get_value(i - 1)) * (double)SAMPLE_FREQ / 2.0;
   }
 
   signal* output_signal = new signal(size, values, sig.loop);

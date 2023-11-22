@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include "component.h"
 #include <cmath>
 
@@ -75,7 +77,7 @@ output_value& sinusoidal_component::generate_output(int output) {
   int size = SAMPLE_FREQ / parameters[0];
   double* values = new double[size];
   for (int i = 0; i < size; i++) {
-    values[i] = parameters[1] * sin(PI_2 * parameters[0] * i / SAMPLE_FREQ + parameters[2]);
+    values[i] = parameters[1] * sin(2 * M_PI * parameters[0] * i / SAMPLE_FREQ + parameters[2]);
   }
   signal* output_signal = new signal(size, values, true);
   output_value* output_value = new synthetisens::output_value;

@@ -17,13 +17,19 @@ bool SignalViewer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
   double stepY = height / (2 * max);
 
   cr->set_line_width(1.0);
+  cr->set_source_rgba(0.0, 0.0, 0.0, 0.5);
+
+  cr->move_to(0, height / 2);
+  cr->line_to(width, height / 2);
+  cr->stroke();
+
   cr->set_source_rgb(0.0, 0.0, 0.0);
   
   //placing the first signal point
   cr->move_to(0, height / 2 - sig->get_value(0) * stepY);
-
+  
   //drawing the signal
-  for (int i = 1; i < 2 * sig->size; i++) {
+  for (int i = 1; i < sig->size; i++) {
     cr->line_to(i * stepX, height / 2 - sig->get_value(i) * stepY);
   }
   cr->stroke();
