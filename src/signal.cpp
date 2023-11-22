@@ -20,8 +20,21 @@ signal::~signal() {
 }
 
 double signal::get_value(int position) const {
-  if (position < 0 || position >= this->size) return this->loop ? this->values[position % size] : 0;
+  if (position < 0 || position >= this->size) {
+    if (!this->loop) return 0;
+    int pos = position % this->size;
+    if (pos < 0) pos += this->size;
+    return this->values[pos];
+  }
   return this->values[position];
+}
+
+double signal::get_max() const {
+  double max = 0;
+  for (int i = 0; i < this->size; i++) {
+    if (fabs(this->values[i]) > max) max = fabs(this->values[i]);
+  }
+  return max;
 }
 
 double signal::tick() {
@@ -98,8 +111,8 @@ signal& derivative(const signal& sig) {
 
   values[0] = (sig.get_value(1) - sig.get_value(0)) * SAMPLE_FREQ;
   values[size - 1] = (sig.get_value(size - 1) - sig.get_value(size - 2)) * SAMPLE_FREQ;
-  for (int i = 1; i < size-1; i++) {
-    values[i] = (sig.get_value(i + 1) - sig.get_value(i - 2)) * SAMPLE_FREQ / 2.0;
+  for (int i = 1; i < size - 1; i++) {
+    values[i] = (sig.get_value(i + 1) - sig.get_value(i - 1)) * (double)SAMPLE_FREQ / 2.0;
   }
 
   signal* output_signal = new signal(size, values, sig.loop);
@@ -109,10 +122,7 @@ signal& derivative(const signal& sig) {
 signal& normalize(const signal& sig) {
   int size =sig.size;
   double* nvalues = new double[size];
-  double max = fabs(sig.get_value(0));
-  for (int i=1; i<size; i++){
-    if (fabs(sig.get_value(i))>max) max=fabs(sig.get_value(i));
-  }
+  double max = sig.get_max();
   for (int i=0; i<size; i++){
     nvalues[i]=sig.get_value(i)/max;
   }
