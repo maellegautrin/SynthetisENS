@@ -15,6 +15,7 @@
 #include <vector>
 
 
+
 char* strremove(char* str, char letter){
     int removed = 0;
     const int n = strlen(str) - 1;
@@ -39,9 +40,11 @@ char* strcopy(const char* str){
 
 using namespace synthetisens;
 
-    extern Port* last_clicked;
-    extern int port_label;
-    extern char* label_space;
+extern component* speaker;
+
+extern Port* last_clicked;
+extern int port_label;
+extern char* label_space;
 
 
 component* match_component(ComponentType type, int id);
@@ -192,6 +195,11 @@ void ComponentEffective::place(Gtk::Frame* slot){
         for(int n = 1; n < virtual_component->num_outputs; n++){
             this->attach_next_to(*this->output_ports[n],*this->output_ports[n-1],Gtk::POS_BOTTOM,1,h);
         }
+    }
+    
+    //adding speaker
+    if (this->type == OTHER_COMPONENT && this->component_id == 0){
+      speaker = this->virtual_component;
     }
 
     slot->remove();
