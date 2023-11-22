@@ -1,8 +1,10 @@
 // Forcing OS to linux (useful for Stk)
 #include "gdkmm/dragcontext.h"
 #include "gdkmm/types.h"
+#include "gtkmm/drawingarea.h"
 #include "gtkmm/enums.h"
 #include "gtkmm/iconset.h"
+#include "gtkmm/popover.h"
 #include "gtkmm/selectiondata.h"
 #include "gtkmm/targetentry.h"
 #include "gtkmm/widget.h"
@@ -26,6 +28,7 @@
 #include "componentselector.h"
 #include "componenteffective.h"
 #include "gridslot.h"
+#include "signal_viewer.h"
 
 #include <Blit.h>
 #include <BlitSaw.h>
@@ -62,6 +65,7 @@ int wave = sine_id;
 RtWvOut* dac;
 
 void play_sound();
+void preview_speaker();
 
 synthetisens::component* speaker;
 
@@ -84,11 +88,16 @@ synthetisens::component* speaker;
   Notebook* components;
   Notebook* workspace;
   MenuBar* menubar;
+
   MenuItem* file;
   Menu* file_menu;
   MenuItem* play;
+
   MenuItem* edit;
+
   MenuItem* view;
+  Menu* view_menu;
+  MenuItem* preview;
 
 //SETUP
 void layout_setup(){
@@ -113,6 +122,8 @@ void layout_setup(){
   play = new MenuItem("play");
   edit = new MenuItem("edit");
   view = new MenuItem("view");
+  view_menu = new Menu();
+  preview = new MenuItem("preview speaker");
 
 
   Image* keyboardimg = new Image("WIP.png");
@@ -140,6 +151,10 @@ void layout_setup(){
   play->signal_activate().connect(sigc::ptr_fun(&play_sound));
   file_menu->append(*play);
   file->set_submenu(*file_menu);
+  
+  preview->signal_activate().connect(sigc::ptr_fun(&preview_speaker));
+  view_menu->append(*preview);
+  view->set_submenu(*view_menu);
 
   menubar->append(*file);
   menubar->append(*edit);
@@ -477,4 +492,30 @@ void play_sound()
   for (int i = 0; i < 50000; i++) dac->tick(sig->tick());
 
   delete dac;
+}
+
+void preview_speaker()
+{
+  Dialog* pop = new Dialog();
+  pop->set_title("Speaker preview");
+  pop->set_default_size(1000, 500);
+  pop->set_transient_for(*window);
+  pop->set_modal(true);
+  pop->set_resizable(false);
+  pop->set_position(Gtk::WIN_POS_CENTER);
+
+  Image* img = new Image("img/speaker.png");
+  img->set_valign(Gtk::ALIGN_CENTER);
+  img->set_halign(Gtk::ALIGN_CENTER);
+  pop->get_content_area()->add(*img);
+
+  Frame* frame = new Frame();
+
+  synthetisens::SignalViewer* sigview = new synthetisens::SignalViewer(1000, 500, speaker->generate_output(0).value.signal);
+  frame->add(*sigview);
+
+  pop->get_content_area()->add(*frame);
+
+  pop->show_all_children();
+  pop->show();
 }

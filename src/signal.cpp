@@ -24,6 +24,14 @@ double signal::get_value(int position) const {
   return this->values[position];
 }
 
+double signal::get_max() const {
+  double max = 0;
+  for (int i = 0; i < this->size; i++) {
+    if (fabs(this->values[i]) > max) max = fabs(this->values[i]);
+  }
+  return max;
+}
+
 double signal::tick() {
   if (this->position < 0 || this->position >= this->size) {
     if (!this->loop) return 0;
@@ -109,10 +117,7 @@ signal& derivative(const signal& sig) {
 signal& normalize(const signal& sig) {
   int size =sig.size;
   double* nvalues = new double[size];
-  double max = fabs(sig.get_value(0));
-  for (int i=1; i<size; i++){
-    if (fabs(sig.get_value(i))>max) max=fabs(sig.get_value(i));
-  }
+  double max = sig.get_max();
   for (int i=0; i<size; i++){
     nvalues[i]=sig.get_value(i)/max;
   }

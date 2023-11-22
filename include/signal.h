@@ -27,6 +27,7 @@ namespace synthetisens {
       ~signal();
       
       double get_value(int position) const;
+      double get_max() const;
 
       double tick();
       void reset();
