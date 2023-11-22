@@ -221,7 +221,4 @@ output_value& constant_component::generate_output(int output) {
   output_value->type = VALUE;
   output_value->value.parameter = this->value;
   return *output_value;
-
-
 }
-

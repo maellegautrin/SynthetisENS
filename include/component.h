@@ -8,17 +8,15 @@
  *
  */
 
-#ifndef _Component_H
-#define _Component_H
+#ifndef _COMPONENT_H
+#define _COMPONENT_H
 
-#include "componentselector.h"
 #include "signal.h"
 #include <vector>
 
 namespace synthetisens {
 
   typedef class component component_t; // typedef for input_port
-
 
   enum port_type {
     SIGNAL,

@@ -238,29 +238,29 @@ synthetisens::ComponentSelector* const880_selector;
 
 void selector_setup(){
   //SIGNALS
-  sine_selector = new synthetisens::ComponentSelector("sine.png",synthetisens::SIGNAL_COMPONENT,0);
-  square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
-  triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
-  sawtooth_selector = new synthetisens::ComponentSelector("sawtooth.png",synthetisens::SIGNAL_COMPONENT,3);
+  sine_selector = new synthetisens::ComponentSelector("img/sine.png",synthetisens::SIGNAL_COMPONENT,0);
+  square_selector = new synthetisens::ComponentSelector("img/square.png",synthetisens::SIGNAL_COMPONENT,1);
+  triangle_selector = new synthetisens::ComponentSelector("img/triangle.png",synthetisens::SIGNAL_COMPONENT,2);
+  sawtooth_selector = new synthetisens::ComponentSelector("img/sawtooth.png",synthetisens::SIGNAL_COMPONENT,3);
   //FILTERS André?
 
   //OPERATORS
-  sum_selector = new synthetisens::ComponentSelector("sum.png",synthetisens::OPERATOR_COMPONENT,0);
-  sub_selector = new synthetisens::ComponentSelector("sub.png",synthetisens::OPERATOR_COMPONENT,1);
-  prod_selector = new synthetisens::ComponentSelector("product.png",synthetisens::OPERATOR_COMPONENT,2);
-  div_selector = new synthetisens::ComponentSelector("div.png",synthetisens::OPERATOR_COMPONENT,3);
-  derivative_selector = new synthetisens::ComponentSelector("derivative.png",synthetisens::OPERATOR_COMPONENT,4);
-  primitive_selector = new synthetisens::ComponentSelector("primitive.png",synthetisens::OPERATOR_COMPONENT,5);
-  normalize_selector = new synthetisens::ComponentSelector("normalize.png",synthetisens::OPERATOR_COMPONENT,6);
+  sum_selector = new synthetisens::ComponentSelector("img/sum.png",synthetisens::OPERATOR_COMPONENT,0);
+  sub_selector = new synthetisens::ComponentSelector("img/sub.png",synthetisens::OPERATOR_COMPONENT,1);
+  prod_selector = new synthetisens::ComponentSelector("img/product.png",synthetisens::OPERATOR_COMPONENT,2);
+  div_selector = new synthetisens::ComponentSelector("img/div.png",synthetisens::OPERATOR_COMPONENT,3);
+  derivative_selector = new synthetisens::ComponentSelector("img/derivative.png",synthetisens::OPERATOR_COMPONENT,4);
+  primitive_selector = new synthetisens::ComponentSelector("img/primitive.png",synthetisens::OPERATOR_COMPONENT,5);
+  normalize_selector = new synthetisens::ComponentSelector("img/normalize.png",synthetisens::OPERATOR_COMPONENT,6);
   //OTHER
-  speaker_selector = new synthetisens::ComponentSelector("speaker.png",synthetisens::OTHER_COMPONENT,0);
-  keyboard_selector = new synthetisens::ComponentSelector("keyboard.png",synthetisens::OTHER_COMPONENT,1);
-  knob_selector = new synthetisens::ComponentSelector("knob.png",synthetisens::OTHER_COMPONENT,2);
-  slider_selector = new synthetisens::ComponentSelector("slider.png",synthetisens::OTHER_COMPONENT,3);
-  const0_selector = new synthetisens::ComponentSelector("const0.png",synthetisens::OTHER_COMPONENT,4);
-  const1_selector = new synthetisens::ComponentSelector("const1.png",synthetisens::OTHER_COMPONENT,5);
-  const440_selector = new synthetisens::ComponentSelector("const440.png",synthetisens::OTHER_COMPONENT,6);
-  const880_selector = new synthetisens::ComponentSelector("const880.png",synthetisens::OTHER_COMPONENT,7);
+  speaker_selector = new synthetisens::ComponentSelector("img/speaker.png",synthetisens::OTHER_COMPONENT,0);
+  keyboard_selector = new synthetisens::ComponentSelector("img/keyboard.png",synthetisens::OTHER_COMPONENT,1);
+  knob_selector = new synthetisens::ComponentSelector("img/knob.png",synthetisens::OTHER_COMPONENT,2);
+  slider_selector = new synthetisens::ComponentSelector("img/slider.png",synthetisens::OTHER_COMPONENT,3);
+  const0_selector = new synthetisens::ComponentSelector("img/const0.png",synthetisens::OTHER_COMPONENT,4);
+  const1_selector = new synthetisens::ComponentSelector("img/const1.png",synthetisens::OTHER_COMPONENT,5);
+  const440_selector = new synthetisens::ComponentSelector("img/const440.png",synthetisens::OTHER_COMPONENT,6);
+  const880_selector = new synthetisens::ComponentSelector("img/const880.png",synthetisens::OTHER_COMPONENT,7);
 
 
   sig_grid->attach(*sine_selector,1,1,1,1);
