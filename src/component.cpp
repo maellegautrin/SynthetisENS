@@ -90,25 +90,24 @@ output_value& square_component::generate_output(int output) {
   double* parameters = this->get_parameters();
   int size = SAMPLE_FREQ / parameters[0];
   double* values = new double[size];
-  if (1 - parameters[4]/(2*3,14)*size>size/2){
-    for (int i=0; i< 1 - parameters[4]/(2*3,14) * size; i++ ){
+  if (1 - parameters[4] / PI_2 * size > (double)size / 2) {
+    for (int i=0; i< 1 - parameters[4] / PI_2 * size; i++ ){
       values[i] = parameters[1]; //max
     }
-    for (int i = 1- parameters[4]/(2*3,14)*size; i < (size/2 + 1- parameters[4]/(2*3,14)*size); i++) {
+    for (int i = 1- parameters[4] / PI_2 * size; i < ((double)size / 2 + 1 - parameters[4] / PI_2 * size); i++) {
         values[i] = parameters[2]; // min
     }
     for (int i = size/2; i < size; i++) {
         values[i] = parameters[1]; // max
     }
-  }
-  else {
-    for (int i=0; i<size/2- parameters[4]/(2*3,14)*size; i++ ){
+  } else {
+    for (int i=0; i < (double)size / 2 - parameters[4] / PI_2 * size; i++ ){
       values[i] = parameters[2]; //min
     }
-    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < (size/2 - parameters[4]/(2*3,14)*size); i++) {
+    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < ((double)size / 2 - parameters[4] / PI_2 * size); i++) {
         values[i] = parameters[1]; // max
     }
-    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < size; i++) {
+    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < size; i++) {
         values[i] = parameters[1]; // min
     }
   }
