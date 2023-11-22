@@ -84,17 +84,33 @@ output_value& sinusoidal_component::generate_output(int output) {
   return *output_value;
 }
 
-square_component::square_component() : component(0, 3, 1) {}
+square_component::square_component() : component(0, 4, 1) {}
 
 output_value& square_component::generate_output(int output) {
   double* parameters = this->get_parameters();
   int size = SAMPLE_FREQ / parameters[0];
   double* values = new double[size];
-  for (int i = 0; i < (size/2); i++) {
-      values[i] = parameters[2]; // min
+  if (1 - parameters[4]/(2*3,14)*size>size/2){
+    for (int i=0; i< 1 - parameters[4]/(2*3,14) * size; i++ ){
+      values[i] = parameters[1]; //max
+    }
+    for (int i = 1- parameters[4]/(2*3,14)*size; i < (size/2 + 1- parameters[4]/(2*3,14)*size); i++) {
+        values[i] = parameters[2]; // min
+    }
+    for (int i = size/2; i < size; i++) {
+        values[i] = parameters[1]; // max
+    }
   }
-  for (int i = size/2; i < size; i++) {
-      values[i] = parameters[1]; // max
+  else {
+    for (int i=0; i<size/2- parameters[4]/(2*3,14)*size; i++ ){
+      values[i] = parameters[2]; //min
+    }
+    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < (size/2 - parameters[4]/(2*3,14)*size); i++) {
+        values[i] = parameters[1]; // max
+    }
+    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < size; i++) {
+        values[i] = parameters[1]; // min
+    }
   }
   signal* output_signal = new signal(size, values, true);
   output_value* output_value = new synthetisens::output_value;
@@ -109,11 +125,27 @@ output_value& triangle_component::generate_output(int output) {
   double* parameters = this->get_parameters();
   int size = SAMPLE_FREQ / parameters[0];
   double* values = new double[size];
-  for (int i = 0; i < (size/2); i++) {
-      values[i] = (parameters[1]*i*2)/size;
+   if (1 - parameters[4]/(2*3,14)*size>size/2){
+    for (int i=0; i<1- parameters[4]/(2*3,14)*size; i++ ){
+      values[i] = ((- 2* parameters[1])/size) * i + (2* parameters[2]) * (1 - parameters[2]/(2*3,14)); //descendante
+    }
+    for (int i = 1- parameters[4]/(2*3,14)*size; i < (size/2 + 1- parameters[4]/(2*3,14)*size); i++) {
+        values[i] = ((- 2* parameters[1])/size) * i + (2* parameters[1]) * (parameters[2]/(2*3,14) - 1) ; // montante
+    }
+    for (int i = size/2; i < size; i++) {
+        values[i] = (-2* parameters[1])/size * i + (2* parameters[1])* (0.5 - parameters[2]/(2*3,14)) + parameters[1]; // descendante
+    }
   }
-  for (int i = size/2; i < size; i++) {
-      values[i] = parameters[1]*(1-2*i/size);
+  else {
+    for (int i=0; i<size/2- parameters[4]/(2*3,14)*size; i++ ){
+      values[i] = ((2* parameters[1])/size)*((parameters[2])/(2*3,14) * size + i); //montante
+    }
+    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < (size/2 - parameters[4]/(2*3,14)*size); i++) {
+        values[i] = (-2*parameters[1]/size)*i + (2*parameters[1]) * (1 - parameters[2]/(2*3,14)); // descendante
+    }
+    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < size; i++) {
+        values[i] = (2*parameters[1]/size)*i + (-2*parameters[1]) * (1 - parameters[2]/(2*3,14)); // montante
+    }
   }
   signal* output_signal = new signal(size, values, true);
   output_value* output_value = new synthetisens::output_value;
