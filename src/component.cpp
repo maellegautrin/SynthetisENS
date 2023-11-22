@@ -120,32 +120,31 @@ output_value& square_component::generate_output(int output) {
   return *output_value;
 }
 
-triangle_component::triangle_component() : component(0, 2, 1) {}
+triangle_component::triangle_component() : component(0, 3, 1) {}
 
 output_value& triangle_component::generate_output(int output) {
   double* parameters = this->get_parameters();
   int size = SAMPLE_FREQ / parameters[0];
   double* values = new double[size];
-   if (1 - parameters[4]/(2*3,14)*size>size/2){
-    for (int i=0; i<1- parameters[4]/(2*3,14)*size; i++ ){
-      values[i] = ((- 2* parameters[1])/size) * i + (2* parameters[2]) * (1 - parameters[2]/(2*3,14)); //descendante
+   if (1 - parameters[4] / PI_2 * size > (double)size / 2){
+    for (int i=0; i< 1 - parameters[4] / PI_2 * size; i++ ){
+      values[i] = ((-2 * parameters[1]) / size) * i + (2 * parameters[2]) * (1 - parameters[2]/ PI_2); //descendante
     }
-    for (int i = 1- parameters[4]/(2*3,14)*size; i < (size/2 + 1- parameters[4]/(2*3,14)*size); i++) {
-        values[i] = ((- 2* parameters[1])/size) * i + (2* parameters[1]) * (parameters[2]/(2*3,14) - 1) ; // montante
+    for (int i = 1 - parameters[4] / PI_2 * size; i < ((double)size / 2 + 1 - parameters[4] / PI_2*size); i++) {
+        values[i] = ((-2 * parameters[1]) / size) * i + (2 * parameters[1]) * (parameters[2] / PI_2 - 1) ; // montante
     }
     for (int i = size/2; i < size; i++) {
-        values[i] = (-2* parameters[1])/size * i + (2* parameters[1])* (0.5 - parameters[2]/(2*3,14)) + parameters[1]; // descendante
+        values[i] = (-2 * parameters[1]) / size * i + (2 * parameters[1]) * (0.5 - parameters[2] / PI_2) + parameters[1]; // descendante
     }
-  }
-  else {
-    for (int i=0; i<size/2- parameters[4]/(2*3,14)*size; i++ ){
-      values[i] = ((2* parameters[1])/size)*((parameters[2])/(2*3,14) * size + i); //montante
+  } else {
+    for (int i=0; i < (double)size / 2 - parameters[4] / PI_2 * size; i++ ){
+      values[i] = ((2 * parameters[1]) / size) * (parameters[2] / PI_2 * size + i); //montante
     }
-    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < (size/2 - parameters[4]/(2*3,14)*size); i++) {
-        values[i] = (-2*parameters[1]/size)*i + (2*parameters[1]) * (1 - parameters[2]/(2*3,14)); // descendante
+    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < ((double)size / 2 - parameters[4] / PI_2 * size); i++) {
+        values[i] = (-2 * parameters[1] / size) * i + (2 * parameters[1]) * (1 - parameters[2] / PI_2); // descendante
     }
-    for (int i = size/2 - parameters[4]/(2*3,14)*size; i < size; i++) {
-        values[i] = (2*parameters[1]/size)*i + (-2*parameters[1]) * (1 - parameters[2]/(2*3,14)); // montante
+    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < size; i++) {
+        values[i] = (2 * parameters[1] / size) * i + (-2 * parameters[1]) * (1 - parameters[2] / PI_2); // montante
     }
   }
   signal* output_signal = new signal(size, values, true);
