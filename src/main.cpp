@@ -8,6 +8,9 @@
 #include "gtkmm/selectiondata.h"
 #include "gtkmm/targetentry.h"
 #include "gtkmm/widget.h"
+#include <iostream>
+#include <vector>
+#include <sndfile.h>
 #define __OS_LINUX__
 
 #define sine_id 1
@@ -322,6 +325,7 @@ void set_blit();
 // Main function
 int main(int argc, char *argv[])
 {
+
   std::cout << Stk::sampleRate() << std::endl;
   auto app = Application::create(argc, argv, "synthetisens.app");
   wave = sine_id;
@@ -488,6 +492,31 @@ void play_sound()
   // synthetisens::signal* sine = c1->generate_output(0).value.signal;
 
   synthetisens::signal* sig = speaker->generate_output(0).value.signal;
+      const char *filename = "output.wav";
+    // Spécifiez les paramètres du fichier WAV
+    SF_INFO sfinfo;
+    sfinfo.samplerate = SAMPLE_FREQ; 
+    sfinfo.channels = 1; // Nombre de canaux 
+    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16; 
+
+    const int numSamples = 50000;
+
+    // Créez un fichier WAV
+    SNDFILE *outfile = sf_open(filename, SFM_WRITE, &sfinfo);
+
+    std::vector<short> samples(50000);
+
+    
+  for (int i = 0; i < 50000; ++i) {
+        samples[i] = static_cast<short>(32767.0 * sig->get_value(i));
+        cout << samples[i] <<endl;
+    };
+  
+
+    sf_writef_short(outfile, samples.data(),numSamples);
+    sf_close(outfile);
+
+    std::cout << "Fichier WAV créé avec succès." << std::endl;
 
   for (int i = 0; i < 50000; i++) dac->tick(sig->tick());
 
