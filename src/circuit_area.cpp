@@ -20,17 +20,19 @@ CircuitArea::CircuitArea() {
 CircuitArea::~CircuitArea() {}
 
 bool CircuitArea::wire_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-  cout << "Hello World!" << endl;
   Gtk::Allocation allocation = this->get_allocation();
   const int width = allocation.get_width();
   const int height = allocation.get_height();
 
-  
-
-  // cr->set_source_rgb(0.0, 0.0, 0.0);
-  // cr->rectangle(10, 10, width/2, height/2);
-  // cr->fill();
-
+  for (int i = 0; i < this->get_children().size(); i++) {
+    ComponentEffective* comp = (ComponentEffective*) this->get_children()[i];
+    vector<Line> lines = comp->draw_ports();
+    for (int j = 0; j < lines.size(); j++) {
+      cr->move_to(lines[j].start.x, lines[j].start.y);
+      cr->line_to(lines[j].end.x, lines[j].end.y);
+      cr->stroke();
+    }
+  }
   return true;
 }
 
@@ -44,19 +46,3 @@ void CircuitArea::drag_data_recvd(const Glib::RefPtr<Gdk::DragContext>& context,
 
   context->drag_finish(true, false, time);
 }
-
-// void CircuitArea::add_wire(Port* source, Port* destination) {
-//   Wire* wire = new Wire();
-//   wire->source = source;
-//   wire->destination = destination;
-//   this->wires.push_back(wire);
-// }
-
-// void CircuitArea::remove_wires(Port* port) {
-//   for (int i = 0; i < this->wires.size(); i++) {
-//     if (this->wires[i]->source == port || this->wires[i]->destination == port) {
-//       this->wires.erase(this->wires.begin() + i);
-//       i--;
-//     }
-//   }
-// }

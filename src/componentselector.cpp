@@ -1,10 +1,7 @@
 #include "componentselector.h"
-#include "gdkmm/device.h"
 #include "gdkmm/types.h"
 #include "gtkmm/enums.h"
 #include "gtkmm/image.h"
-#include "gtkmm/box.h"
-#include <iostream>
 #include <vector>
 #include "component_definition.h"
 

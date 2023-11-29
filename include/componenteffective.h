@@ -26,6 +26,16 @@ namespace synthetisens{
   typedef class Port Port;
   typedef class ComponentEffective ComponentEffective;
 
+  struct Point {
+    int x;
+    int y;
+  };
+
+  struct Line {
+    Point start;
+    Point end;
+  };
+
   struct Wire {
     Port* source;
     Port* destination;
@@ -48,7 +58,7 @@ namespace synthetisens{
       void outlink(Port* destination);
       void inlink(Port* destination);
 
-      bool draw_wires(const Cairo::RefPtr<Cairo::Context>& cr);
+      std::vector<Line> draw_wires();
   };
 
   class ComponentEffective : public Gtk::Grid {
@@ -65,6 +75,7 @@ namespace synthetisens{
       component* virtual_component;
 
       int port_position(Port* port);
+      std::vector<Line> draw_ports();
   };
 }
 #endif
