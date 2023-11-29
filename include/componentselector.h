@@ -4,29 +4,23 @@
 #include "component.h"
 #include "gtkmm/box.h"
 #include "gtkmm/button.h"
+#include "gtkmm/frame.h"
 #include "gtkmm/image.h"
+#include "gtkmm/eventbox.h"
+#include "component_definition.h"
 
 
 namespace synthetisens {
 
-  typedef enum {
-    SIGNAL_COMPONENT,
-    FILTER_COMPONENT,
-    OPERATOR_COMPONENT,
-    OTHER_COMPONENT
-  } ComponentType;
-
-  class ComponentSelector : public Gtk::Button {
+  class ComponentSelector : public Gtk::EventBox {
     private:
       Gtk::Image* img;
+      void component_data_drag(const Glib::RefPtr<Gdk::DragContext>& context, Gtk::SelectionData& selection_data, guint info, guint time);
 
     public:
-      ComponentSelector(const char* imglink, ComponentType type, int component_id);
-      void click_handler();
+      ComponentSelector(ComponentValue value);
 
-      const int component_id;
-      const ComponentType type;
-      const char* imglink;
+      const ComponentValue value;
   };
 }
 #endif

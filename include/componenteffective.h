@@ -3,6 +3,7 @@
 
 #include "component.h"
 #include "componentselector.h"
+#include "gtkmm/eventbox.h"
 #include "gtkmm/grid.h"
 #include "gtkmm/frame.h"
 #include "gtkmm/button.h"
@@ -15,36 +16,49 @@
 
 namespace synthetisens{
 
-  typedef enum {
+  enum PortType {
     SIGNAL_INPUT_PORT,
     SIGNAL_OUTPUT_PORT,
     VALUE_INPUT_PORT,
     VALUE_OUTPUT_PORT
-  } PortType;
+  };
 
   typedef class Port Port;
   typedef class ComponentEffective ComponentEffective;
 
-  class Wire : public Gtk::Widget {
-    public:
-      Wire(Port* source, Port* destination);
-      Port* source;
-      Port* destination;
+  struct Point {
+    int x;
+    int y;
   };
 
-  class Port : public Gtk::Button {
+  struct Line {
+    Point start;
+    Point end;
+  };
+
+  struct Wire {
+    Port* source;
+    Port* destination;
+  };
+
+  class Port : public Gtk::EventBox {
     private:
       ComponentEffective* parent;
+      std::vector<Wire*> wires;
+      Gtk::Frame* frame;
+
+      void drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context, Gtk::SelectionData& selection_data, guint info, guint time);
+      void drag_data_recvd(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time);
 
     public:
       Port(PortType type, ComponentEffective* parent);
-      void click_handler();
 
       const PortType type;
-      std::vector<Wire*> links;
-      void link(Port* destination, char* label);
-      void outlink(Port* destination, char* label);
-      void inlink(Port* destination, char* label);
+      void link(Port* destination);
+      void outlink(Port* destination);
+      void inlink(Port* destination);
+
+      std::vector<Line> draw_wires();
   };
 
   class ComponentEffective : public Gtk::Grid {
@@ -55,16 +69,13 @@ namespace synthetisens{
       Port** output_ports;
 
     public:
-      ComponentEffective(const char* img, ComponentType type, int component_id);
+      ComponentEffective(ComponentValue value);
 
-      void place(Gtk::Frame* slot);
-
-      const int component_id;
-      const ComponentType type;
+      const ComponentValue value;
       component* virtual_component;
-      const char* imglink;
 
       int port_position(Port* port);
+      std::vector<Line> draw_ports();
   };
 }
 #endif

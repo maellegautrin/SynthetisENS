@@ -1,11 +1,13 @@
 #include "componenteffective.h"
 #include "component.h"
+#include "component_definition.h"
 #include "componentselector.h"
 #include "gtkmm/enums.h"
 #include "gtkmm/frame.h"
 #include "gtkmm/grid.h"
 #include "gtkmm/widget.h"
 #include "gtkmm/image.h"
+#include "gtkmm/window.h"
 #include "gtkmm/box.h"
 #include <cstring>
 #include <iostream>
@@ -13,7 +15,7 @@
 #include <string>
 #include <vector>
 
-
+extern Gtk::Window* window;
 
 char* strremove(char* str, char letter){
     int removed = 0;
@@ -45,29 +47,59 @@ extern Port* last_clicked;
 extern int port_label;
 extern char* label_space;
 
+Port::Port(PortType type, ComponentEffective* parent) : type(type), parent(parent) {
+  this->frame = new Gtk::Frame();
+  this->frame->set_size_request(20,20);
+  this->frame->set_shadow_type(Gtk::SHADOW_ETCHED_IN);
+  this->frame->set_label_align(Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+  this->frame->set_label("");
+  this->add(*this->frame);
 
-component* match_component(ComponentType type, int id);
+  this->drag_source_set(std::vector<Gtk::TargetEntry>({Gtk::TargetEntry("create_wire")}), Gdk::BUTTON1_MASK, Gdk::ACTION_COPY);
+  this->drag_dest_set(std::vector<Gtk::TargetEntry>({Gtk::TargetEntry("create_wire")}), Gtk::DEST_DEFAULT_ALL, Gdk::ACTION_COPY);
 
-
-Wire::Wire(Port* source, Port* destination) : source(source), destination(destination) {}
-
-void Port::click_handler() {
-  if (!last_clicked) {
-    last_clicked = this;
-  } else {
-    char label_chr = label_space[port_label];
-    char label[2] = {label_chr, '\0'};
-    port_label = (port_label + 1) % strlen(label_space);  
-    this->link(last_clicked,label);
-    last_clicked->link(this,label);
-    last_clicked = NULL;
-  }
+  this->signal_drag_data_get().connect(sigc::mem_fun(*this, &Port::drag_data_get));
+  this->signal_drag_data_received().connect(sigc::mem_fun(*this, &Port::drag_data_recvd));
 }
 
-Port::Port(PortType type, ComponentEffective* parent) : type(type), parent(parent) {
-  links = std::vector<Wire*>();
-  this->set_label("");
-  this->signal_clicked().connect(sigc::mem_fun(*this, &Port::click_handler));
+void Port::drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context, Gtk::SelectionData& selection_data, guint info, guint time) {
+  //Sending the port pointer
+  Port* sender = this;
+  selection_data.set(selection_data.get_target(), 8, (const guchar*) &sender, sizeof(Port*));
+}
+
+void Port::drag_data_recvd(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time) {
+  //Receiving the port pointer
+  Port** sender_pointer = (Port**)selection_data.get_data();
+  Port* sender = *sender_pointer;
+
+  this->link(sender);
+  sender->link(this);
+
+  context->drag_finish(true, false, time);
+}
+
+void Port::inlink(Port* destination) {
+  if(wires.size() > 0){
+    wires.erase(wires.begin());
+    this->parent->virtual_component->disconnect_input(this->parent->port_position(this));
+
+    if(wires[0]->destination != destination){
+      Wire* w = new Wire();
+      w->source = this;
+      w->destination = destination;
+
+      wires.insert(wires.begin(), 1, w);
+      this->parent->virtual_component->connect_input(this->parent->port_position(this), *destination->parent->virtual_component, destination->parent->port_position(destination));
+    }
+  } else {
+    Wire* w = new Wire();
+    w->source = this;
+    w->destination = destination;
+
+    wires.insert(wires.begin(), 1, w);
+    this->parent->virtual_component->connect_input(this->parent->port_position(this), *destination->parent->virtual_component, destination->parent->port_position(destination));
+  }
 }
 
 int check_existing_link(std::vector<Wire*> links, Port* destination) {
@@ -77,52 +109,29 @@ int check_existing_link(std::vector<Wire*> links, Port* destination) {
   return -1;
 }
 
-void Port::inlink(Port* destination, char* label) {
-  if(links.size() > 0){
-    links.erase(links.begin());
-    this->set_label("");
-    this->parent->virtual_component->disconnect_input(this->parent->port_position(this));
-
-    if(links[0]->destination != destination){
-      links.insert(links.begin(),1,new Wire(this,destination));
-      const char* coldlabel = this->get_label().c_str();
-      char* oldlabel = strcopy(coldlabel);
-      this->set_label(strcat(oldlabel,label));
-      this->parent->virtual_component->connect_input(this->parent->port_position(this), *destination->parent->virtual_component, destination->parent->port_position(destination));
-    }
-  } else {
-    links.insert(links.begin(),1,new Wire(this,destination));
-    const char* coldlabel = this->get_label().c_str();
-    char* oldlabel = strcopy(coldlabel);
-    this->set_label(strcat(oldlabel,label));
-    this->parent->virtual_component->connect_input(this->parent->port_position(this), *destination->parent->virtual_component, destination->parent->port_position(destination));
-  }
-}
-
-void Port::outlink(Port* destination, char* label) {
-  int pos = check_existing_link(links,destination);
+void Port::outlink(Port* destination) {
+  int pos = check_existing_link(wires,destination);
   if(pos >= 0){
-    links.erase(links.begin()+pos);
-    const char* coldlabel = this->get_label().c_str();
-    char* oldlabel = strcopy(coldlabel);
-    this->set_label(strremove(oldlabel,label[0]));
+    wires.erase(wires.begin()+pos);
   } else {
-    links.insert(links.begin(), 1, new Wire(this,destination));
-    const char* coldlabel = this->get_label().c_str();
-    char* oldlabel = strcopy(coldlabel);
-    this->set_label(strcat(oldlabel,label));
+    Wire* w = new Wire();
+    w->source = this;
+    w->destination = destination;
+
+    wires.insert(wires.begin(), 1, w);
   }
 }
 
-void Port::link(Port* destination, char* label) {
+void Port::link(Port* destination) {
   const PortType dtype = destination->type;
 
   if (((type == SIGNAL_INPUT_PORT) && (dtype == SIGNAL_OUTPUT_PORT)) || ((type == VALUE_INPUT_PORT) && (dtype == VALUE_OUTPUT_PORT))) {
-    inlink(destination, label);
+    inlink(destination);
   }
   if (((dtype == SIGNAL_INPUT_PORT) && (type == SIGNAL_OUTPUT_PORT)) || ((dtype == VALUE_INPUT_PORT) && (type == VALUE_OUTPUT_PORT))) {
-    outlink(destination, label);
+    outlink(destination);
   }
+  window->queue_draw();
 }
 
 int ComponentEffective::port_position(Port* port) {
@@ -143,14 +152,27 @@ int ComponentEffective::port_position(Port* port) {
   return 0;
 }
 
-ComponentEffective::ComponentEffective(const char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
+std::vector<Line> Port::draw_wires() {
+  std::vector<Line> lines;
+  for (int i = 0; i < wires.size(); i++) {
+    Line line;
+    line.start.x = this->get_allocation().get_x() + this->get_allocation().get_width()/2;
+    line.start.y = this->get_allocation().get_y() + this->get_allocation().get_height()/2;
+    line.end.x = wires[i]->destination->get_allocation().get_x() + wires[i]->destination->get_allocation().get_width()/2;
+    line.end.y = wires[i]->destination->get_allocation().get_y() + wires[i]->destination->get_allocation().get_height()/2;
+    lines.push_back(line);
+  }
+  return lines;
+}
+
+ComponentEffective::ComponentEffective(ComponentValue value) : value(value) {
   this->box = new Gtk::Box();
-  this->img = new Gtk::Image(imglink);
+  this->img = new Gtk::Image(component_icon[this->value]);
   this->img->set_valign(Gtk::ALIGN_CENTER);
   this->img->set_halign(Gtk::ALIGN_CENTER);
   this->box->add(*(this->img));
 
-  virtual_component = match_component(type, component_id);
+  virtual_component = create_component(value);
 
   input_ports = new Port*[virtual_component->num_inputs + virtual_component->num_parameters];
   for (int i = 0; i < (virtual_component->num_inputs + virtual_component->num_parameters); i++){
@@ -160,9 +182,8 @@ ComponentEffective::ComponentEffective(const char* imglink, ComponentType type, 
   for (int i = 0; i < virtual_component->num_outputs; i++){
     output_ports[i] = new Port(SIGNAL_OUTPUT_PORT,this);
   }
-}
 
-void ComponentEffective::place(Gtk::Frame* slot) {
+  //MOUNTING THE COMPONENT
   const int num_inputs = virtual_component->num_inputs + virtual_component->num_parameters;
   const int m = MAX(num_inputs, virtual_component->num_outputs);
   if (num_inputs > 0){     //on attache les ports d'entrées à gauche de l'image du composant, les uns aux dessus des autres
@@ -183,43 +204,17 @@ void ComponentEffective::place(Gtk::Frame* slot) {
       this->attach_next_to(*this->output_ports[n],*this->output_ports[n-1],Gtk::POS_BOTTOM,1,h);
     }
   }
-  
-  //adding speaker
-  if (this->type == OTHER_COMPONENT && this->component_id == 0){
-    speaker = this->virtual_component;
-  }
-
-  slot->remove();
-  slot->add(*this);
 }
 
-component* match_component(ComponentType type, int id){
-  if (type == SIGNAL_COMPONENT) {
-      if(id == 0) return (new sinusoidal_component());
-      if(id == 1) return (new square_component());
-      if(id == 2) return (new triangle_component());
-      if(id == 3) return (new sawtooth_component());
-  } else if (type == FILTER_COMPONENT) {
-  } else if (type == OPERATOR_COMPONENT) {
-      if(id == 0) return (new sum_component());
-      if(id == 1) return (new sub_component());
-      if(id == 2) return (new prod_component());
-      if(id == 3) return (new div_component());
-      if(id == 4) return (new derivative_component());
-      if(id == 5) return (new primitive_component());
-      if(id == 6) return (new normalize_component());
-
-  } else if (type == OTHER_COMPONENT) {
-      if(id == 0) return (new speaker_component());
-      if(id == 1) return (new constant_component(0.0));
-      if(id == 2) return (new constant_component(0.0));
-      if(id == 3) return (new constant_component(0.0));
-      if(id == 4) return (new constant_component(0.0));
-      if(id == 5) return (new constant_component(1.0));
-      if(id == 6) return (new constant_component(440.0));
-      if(id == 7) return (new constant_component(880.0));
+std::vector<Line> ComponentEffective::draw_ports() {
+  std::vector<Line> lines;
+  for (int i = 0; i < virtual_component->num_inputs + virtual_component->num_parameters; i++){
+    std::vector<Line> port_lines = input_ports[i]->draw_wires();
+    lines.insert(lines.end(), port_lines.begin(), port_lines.end());
   }
-  return new constant_component(0.0);
+  for (int i = 0; i < virtual_component->num_outputs; i++){
+    std::vector<Line> port_lines = output_ports[i]->draw_wires();
+    lines.insert(lines.end(), port_lines.begin(), port_lines.end());
+  }
+  return lines;
 }
-
-void test(char* text){ std::cout << text;}
