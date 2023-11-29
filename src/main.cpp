@@ -68,6 +68,7 @@ int wave = sine_id;
 RtWvOut* dac;
 
 void play_sound();
+void save_sound();
 void preview_speaker();
 
 synthetisens::component* speaker;
@@ -95,6 +96,7 @@ synthetisens::component* speaker;
   MenuItem* file;
   Menu* file_menu;
   MenuItem* play;
+  MenuItem* save;
 
   MenuItem* edit;
 
@@ -123,6 +125,7 @@ void layout_setup(){
   file = new MenuItem("file");
   file_menu = new Menu();
   play = new MenuItem("play");
+  save = new MenuItem("save");
   edit = new MenuItem("edit");
   view = new MenuItem("view");
   view_menu = new Menu();
@@ -155,6 +158,10 @@ void layout_setup(){
   file_menu->append(*play);
   file->set_submenu(*file_menu);
   
+  save->signal_activate().connect(sigc::ptr_fun(&save_sound));
+  file_menu->append(*save);
+  file->set_submenu(*file_menu);
+
   preview->signal_activate().connect(sigc::ptr_fun(&preview_speaker));
   view_menu->append(*preview);
   view->set_submenu(*view_menu);
@@ -476,23 +483,11 @@ void set_blit(){
 //   delete dac;
 // }
 
-
-void play_sound()
+void save_sound()
 {
-  dac = new RtWvOut( 1 );
-  // synthetisens::component* freq = new synthetisens::constant_component(440);
-  // synthetisens::component* ampl = new synthetisens::constant_component(1);
-  // synthetisens::component* phase = new synthetisens::constant_component(0);
-  // 
-  // synthetisens::component* c1 = new synthetisens::sinusoidal_component();
-  // c1->connect_input(0, *freq, 0);
-  // c1->connect_input(1, *ampl, 0);
-  // c1->connect_input(2, *phase, 0);
+    synthetisens::signal* sig = speaker->generate_output(0).value.signal;
 
-  // synthetisens::signal* sine = c1->generate_output(0).value.signal;
-
-  synthetisens::signal* sig = speaker->generate_output(0).value.signal;
-      const char *filename = "output.wav";
+    const char *filename = "output.wav";
     // Spécifiez les paramètres du fichier WAV
     SF_INFO sfinfo;
     sfinfo.samplerate = SAMPLE_FREQ; 
@@ -509,14 +504,29 @@ void play_sound()
     
   for (int i = 0; i < 50000; ++i) {
         samples[i] = static_cast<short>(32767.0 * sig->get_value(i));
-        cout << samples[i] <<endl;
     };
-  
-
     sf_writef_short(outfile, samples.data(),numSamples);
     sf_close(outfile);
 
     std::cout << "Fichier WAV créé avec succès." << std::endl;
+}
+
+void play_sound()
+{
+  dac = new RtWvOut( 1 );
+  // synthetisens::component* freq = new synthetisens::constant_component(440);
+  // synthetisens::component* ampl = new synthetisens::constant_component(1);
+  // synthetisens::component* phase = new synthetisens::constant_component(0);
+  // 
+  // synthetisens::component* c1 = new synthetisens::sinusoidal_component();
+  // c1->connect_input(0, *freq, 0);
+  // c1->connect_input(1, *ampl, 0);
+  // c1->connect_input(2, *phase, 0);
+
+  // synthetisens::signal* sine = c1->generate_output(0).value.signal;
+
+  synthetisens::signal* sig = speaker->generate_output(0).value.signal;
+    
 
   for (int i = 0; i < 50000; i++) dac->tick(sig->tick());
 
