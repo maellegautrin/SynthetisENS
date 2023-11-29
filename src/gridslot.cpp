@@ -13,8 +13,8 @@ extern ComponentSelector* current_selector;
 
 void GridSlot::click_handler(){
   if(current_selector != NULL){
-    ComponentEffective* new_component = new ComponentEffective(current_selector->imglink, current_selector->type, current_selector->component_id);
-    new_component->place(this);
+    // ComponentEffective* new_component = new ComponentEffective(current_selector->imglink, current_selector->type, current_selector->component_id);
+    // new_component->place(this);
     this->show_all();
     current_selector = NULL;
   }

@@ -1,4 +1,5 @@
 // Forcing OS to linux (useful for Stk)
+#include "circuit_area.h"
 #include "gdkmm/dragcontext.h"
 #include "gdkmm/types.h"
 #include "gtkmm/drawingarea.h"
@@ -29,6 +30,7 @@
 #include "componenteffective.h"
 #include "gridslot.h"
 #include "signal_viewer.h"
+#include "component_definition.h"
 
 #include <Blit.h>
 #include <BlitSaw.h>
@@ -39,6 +41,7 @@
 using namespace stk;
 using namespace Gtk;
 using namespace std;
+using namespace synthetisens;
 
 //Port label variables
 synthetisens::Port* last_clicked;
@@ -68,6 +71,26 @@ void play_sound();
 void preview_speaker();
 
 synthetisens::component* speaker;
+
+bool on_drag_motion(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time){
+  std::cout << "Drag motion" << std::endl;
+  return true;
+}
+
+void on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& context, guint time){
+  std::cout << "Drag leave" << std::endl;
+}
+
+bool on_drag_drop(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time){
+  std::cout << "Drag drop dest" << std::endl;
+  return true;
+}
+
+void on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time){
+  std::cout << "Drag data received " << x << " - " << y << std::endl;
+  std::string data = selection_data.get_data_as_string();
+  std::cout << data << std::endl;
+}
 
 /*-----------------INTERFACE------------------*/
 // DELCARATIONS
@@ -129,12 +152,15 @@ void layout_setup(){
   Image* keyboardimg = new Image("WIP.png");
   keyboard->add(*keyboardimg);
 
+  synthetisens::CircuitArea* circuit_area = new synthetisens::CircuitArea();
+
   components->append_page(*sigs, "signals");
   components->append_page(*filters, "filters");
   components->append_page(*operators, "operators");
   components->append_page(*other,"other");
   workspace->append_page(*synth_grid, "synth");
   workspace->append_page(*keyboard, "keyboard");
+  workspace->append_page(*circuit_area, "circuit");
 
   sigs->add(*sig_grid);
   filters->add(*filter_grid);
@@ -147,6 +173,11 @@ void layout_setup(){
 
   sigs->set_size_request(375,400);
   synth_grid->set_size_request(900,600);
+  synth_grid->drag_dest_set(std::vector<Gtk::TargetEntry>({Gtk::TargetEntry("INTEGER")}), DEST_DEFAULT_ALL, Gdk::ACTION_COPY);
+  synth_grid->signal_drag_motion().connect(sigc::ptr_fun(&on_drag_motion));
+  synth_grid->signal_drag_leave().connect(sigc::ptr_fun(&on_drag_leave));
+  synth_grid->signal_drag_drop().connect(sigc::ptr_fun(&on_drag_drop));
+  synth_grid->signal_drag_data_received().connect(sigc::ptr_fun(&on_drag_data_received));
 
   play->signal_activate().connect(sigc::ptr_fun(&play_sound));
   file_menu->append(*play);
@@ -164,7 +195,7 @@ void layout_setup(){
   main_grid->attach_next_to(*components_frame,*menubar,POS_BOTTOM,3,3);
   main_grid->attach_next_to(*workspace_frame,*components_frame,POS_RIGHT,3,3);
 
-};
+}
 
 
 
@@ -207,7 +238,7 @@ void drag_and_drop_destination_setup(Widget* destination){
 
 
   destination->signal_connect("drag-data-received", G_CALLBACK(drag_data_received_handl), NULL);
-  /*g_signal_connect(*destination, "drag-leave", G_CALLBACK (drag_leave_handl), NULL);
+  g_signal_connect(*destination, "drag-leave", G_CALLBACK (drag_leave_handl), NULL);
   g_signal_connect(*destination, "drag-motion", G_CALLBACK (drag_motion_handl), NULL);
   g_signal_connect(*destination, "drag-drop", G_CALLBACK (drag_drop_handl), NULL);*//*
 
@@ -226,7 +257,7 @@ void drag_and_drop_source_setup(Widget* source){
 /*-----------------SELECTORS------------------*/
 
 //SIGNALS
-synthetisens::ComponentSelector* sine_selector;
+ComponentSelector* sine_selector;
 synthetisens::ComponentSelector* square_selector;
 synthetisens::ComponentSelector* triangle_selector;
 synthetisens::ComponentSelector* sawtooth_selector;
@@ -251,39 +282,41 @@ synthetisens::ComponentSelector* const440_selector;
 synthetisens::ComponentSelector* const880_selector;
 
 
-void selector_setup(){
+void selector_setup() {
   //SIGNALS
-  sine_selector = new synthetisens::ComponentSelector("img/sine.png",synthetisens::SIGNAL_COMPONENT,0);
-  square_selector = new synthetisens::ComponentSelector("img/square.png",synthetisens::SIGNAL_COMPONENT,1);
-  triangle_selector = new synthetisens::ComponentSelector("img/triangle.png",synthetisens::SIGNAL_COMPONENT,2);
-  sawtooth_selector = new synthetisens::ComponentSelector("img/sawtooth.png",synthetisens::SIGNAL_COMPONENT,3);
-  //FILTERS André?
+  sine_selector = new ComponentSelector(SINUSOIDAL_GENERATOR);
+  square_selector = new ComponentSelector(SQUARE_GENERATOR);
+  triangle_selector = new ComponentSelector(TRIANGLE_GENERATOR);
+  sawtooth_selector = new ComponentSelector(SAWTOOTH_GENERATOR);
 
-  //OPERATORS
-  sum_selector = new synthetisens::ComponentSelector("img/sum.png",synthetisens::OPERATOR_COMPONENT,0);
-  sub_selector = new synthetisens::ComponentSelector("img/sub.png",synthetisens::OPERATOR_COMPONENT,1);
-  prod_selector = new synthetisens::ComponentSelector("img/product.png",synthetisens::OPERATOR_COMPONENT,2);
-  div_selector = new synthetisens::ComponentSelector("img/div.png",synthetisens::OPERATOR_COMPONENT,3);
-  derivative_selector = new synthetisens::ComponentSelector("img/derivative.png",synthetisens::OPERATOR_COMPONENT,4);
-  primitive_selector = new synthetisens::ComponentSelector("img/primitive.png",synthetisens::OPERATOR_COMPONENT,5);
-  normalize_selector = new synthetisens::ComponentSelector("img/normalize.png",synthetisens::OPERATOR_COMPONENT,6);
+  //FILTERS
+
+  // //OPERATORS
+  sum_selector = new ComponentSelector(SUM);
+  sub_selector = new ComponentSelector(SUB);
+  prod_selector = new ComponentSelector(MUL);
+  div_selector = new ComponentSelector(DIV);
+  derivative_selector = new ComponentSelector(DERIVATIVE);
+  primitive_selector = new ComponentSelector(PRIMITIVE);
+  // normalize_selector = new ComponentSelector(NORMALIZE);
+  
   //OTHER
-  speaker_selector = new synthetisens::ComponentSelector("img/speaker.png",synthetisens::OTHER_COMPONENT,0);
-  keyboard_selector = new synthetisens::ComponentSelector("img/keyboard.png",synthetisens::OTHER_COMPONENT,1);
-  knob_selector = new synthetisens::ComponentSelector("img/knob.png",synthetisens::OTHER_COMPONENT,2);
-  slider_selector = new synthetisens::ComponentSelector("img/slider.png",synthetisens::OTHER_COMPONENT,3);
-  const0_selector = new synthetisens::ComponentSelector("img/const0.png",synthetisens::OTHER_COMPONENT,4);
-  const1_selector = new synthetisens::ComponentSelector("img/const1.png",synthetisens::OTHER_COMPONENT,5);
-  const440_selector = new synthetisens::ComponentSelector("img/const440.png",synthetisens::OTHER_COMPONENT,6);
-  const880_selector = new synthetisens::ComponentSelector("img/const880.png",synthetisens::OTHER_COMPONENT,7);
+  speaker_selector = new ComponentSelector(SPEAKER);
+  // keyboard_selector = new ComponentSelector(KEYBOARD);
+  // knob_selector = new ComponentSelector(KNOB);
+  // slider_selector = new ComponentSelector(SLIDER);
+  // const0_selector = new ComponentSelector(CONSTANT);
+  const1_selector = new ComponentSelector(CONSTANT1);
+  const440_selector = new ComponentSelector(CONSTANT440);
+  // const880_selector = new ComponentSelector(CONSTANT);
 
-
+  // cout << sine_selector << endl;
   sig_grid->attach(*sine_selector,1,1,1,1);
   sig_grid->attach(*square_selector,2,1,1,1);
   sig_grid->attach(*triangle_selector,3,1,1,1);
   sig_grid->attach(*sawtooth_selector,1,2,1,1);
 
-  //filter_grid->attach
+  // //filter_grid->attach
 
   operator_grid->attach(*sum_selector,1,1,1,1);
   operator_grid->attach(*sub_selector,2,1,1,1);
@@ -291,16 +324,16 @@ void selector_setup(){
   operator_grid->attach(*div_selector,1,2,1,1);
   operator_grid->attach(*derivative_selector,2,2,1,1);
   operator_grid->attach(*primitive_selector,3,2,1,1);
-  operator_grid->attach(*normalize_selector,1,3,1,1);
+  // operator_grid->attach(*normalize_selector,1,3,1,1);
 
   other_grid->attach(*speaker_selector,1,1,1,1);
-  other_grid->attach(*keyboard_selector,2,1,1,1);
-  other_grid->attach(*knob_selector,3,1,1,1);
-  other_grid->attach(*slider_selector,1,2,1,1);
-  other_grid->attach(*const0_selector,2,2,1,1);
+  // other_grid->attach(*keyboard_selector,2,1,1,1);
+  // other_grid->attach(*knob_selector,3,1,1,1);
+  // other_grid->attach(*slider_selector,1,2,1,1);
+  // other_grid->attach(*const0_selector,2,2,1,1);
   other_grid->attach(*const1_selector,3,2,1,1);
   other_grid->attach(*const440_selector,1,3,1,1);
-  other_grid->attach(*const880_selector,2,3,1,1);
+  // other_grid->attach(*const880_selector,2,3,1,1);
 
 }
 

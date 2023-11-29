@@ -1,23 +1,27 @@
 #include "componentselector.h"
+#include "gdkmm/device.h"
+#include "gdkmm/types.h"
 #include "gtkmm/enums.h"
 #include "gtkmm/image.h"
 #include "gtkmm/box.h"
 #include <iostream>
+#include <vector>
+#include "component_definition.h"
 
 using namespace synthetisens;
 
-extern ComponentSelector* current_selector;
-
-void ComponentSelector::click_handler(){
-  current_selector = this;
-}
-
-ComponentSelector::ComponentSelector(const char* imglink, ComponentType type, int component_id) : imglink(imglink), type(type), component_id(component_id) {
+ComponentSelector::ComponentSelector(ComponentValue value) : value(value) {
   this->set_size_request(125,125);
-  this->img = new Gtk::Image(imglink);
+  this->img = new Gtk::Image(component_icon[this->value]);
   this->img->set_valign(Gtk::ALIGN_CENTER);
   this->img->set_halign(Gtk::ALIGN_CENTER);
-  this->set_image(*(this->img)); 
+  this->add(*this->img);
+  // this->set_image(*(this->img)); 
 
-  this->signal_clicked().connect(sigc::mem_fun(*this, &ComponentSelector::click_handler));
+  this->drag_source_set(std::vector<Gtk::TargetEntry>({Gtk::TargetEntry("placing_component")}), Gdk::BUTTON1_MASK, Gdk::ACTION_COPY);
+  this->signal_drag_data_get().connect(sigc::mem_fun(*this, &ComponentSelector::component_data_drag));
+}
+
+void ComponentSelector::component_data_drag(const Glib::RefPtr<Gdk::DragContext>& context, Gtk::SelectionData& selection_data, guint info, guint time){
+  selection_data.set(selection_data.get_target(), std::to_string(this->value));
 }
