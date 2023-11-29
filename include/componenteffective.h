@@ -61,12 +61,15 @@ namespace synthetisens{
       std::vector<Line> draw_wires();
   };
 
-  class ComponentEffective : public Gtk::Grid {
+  class ComponentEffective : public Gtk::EventBox {
     private:
+      Gtk::Grid* grid;
       Gtk::Box* box;
       Gtk::Image* img;
       Port** input_ports;
       Port** output_ports;
+
+      bool clicked(GdkEventButton* event);
 
     public:
       ComponentEffective(ComponentValue value);

@@ -13,7 +13,6 @@ ComponentSelector::ComponentSelector(ComponentValue value) : value(value) {
   this->img->set_valign(Gtk::ALIGN_CENTER);
   this->img->set_halign(Gtk::ALIGN_CENTER);
   this->add(*this->img);
-  // this->set_image(*(this->img)); 
 
   this->drag_source_set(std::vector<Gtk::TargetEntry>({Gtk::TargetEntry("placing_component")}), Gdk::BUTTON1_MASK, Gdk::ACTION_COPY);
   this->signal_drag_data_get().connect(sigc::mem_fun(*this, &ComponentSelector::component_data_drag));

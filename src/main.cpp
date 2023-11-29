@@ -23,7 +23,6 @@
 
 #include "component.h"
 #include "componentselector.h"
-#include "componenteffective.h"
 #include "signal_viewer.h"
 #include "component_definition.h"
 
@@ -33,14 +32,6 @@ using namespace stk;
 using namespace Gtk;
 using namespace std;
 using namespace synthetisens;
-
-//Port label variables
-synthetisens::Port* last_clicked;
-int port_label;
-const char* label_space = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-//Selector variables
-synthetisens::ComponentSelector* current_selector;
 
 // Gtk components
 Window* window;
@@ -198,9 +189,7 @@ synthetisens::ComponentSelector* keyboard_selector;
 synthetisens::ComponentSelector* knob_selector;
 synthetisens::ComponentSelector* slider_selector;
 synthetisens::ComponentSelector* const0_selector;
-synthetisens::ComponentSelector* const1_selector;
-synthetisens::ComponentSelector* const440_selector;
-synthetisens::ComponentSelector* const880_selector;
+synthetisens::ComponentSelector* const_selector;
 
 
 void selector_setup() {
@@ -227,8 +216,7 @@ void selector_setup() {
   // knob_selector = new ComponentSelector(KNOB);
   // slider_selector = new ComponentSelector(SLIDER);
   // const0_selector = new ComponentSelector(CONSTANT);
-  const1_selector = new ComponentSelector(CONSTANT1);
-  const440_selector = new ComponentSelector(CONSTANT440);
+  const_selector = new ComponentSelector(CONSTANT);
   // const880_selector = new ComponentSelector(CONSTANT);
 
   // cout << sine_selector << endl;
@@ -252,8 +240,7 @@ void selector_setup() {
   // other_grid->attach(*knob_selector,3,1,1,1);
   // other_grid->attach(*slider_selector,1,2,1,1);
   // other_grid->attach(*const0_selector,2,2,1,1);
-  other_grid->attach(*const1_selector,3,2,1,1);
-  other_grid->attach(*const440_selector,1,3,1,1);
+  other_grid->attach(*const_selector,1,3,1,1);
   // other_grid->attach(*const880_selector,2,3,1,1);
 
 }
@@ -276,12 +263,6 @@ int main(int argc, char *argv[])
   layout_setup();
   //synth_grid_setup();
   selector_setup();
-
-  last_clicked = NULL;
-  port_label = 0;
-  current_selector = NULL;
-
-
 
   Stk::setSampleRate(44100.0);
   Stk::showWarnings(true);

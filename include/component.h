@@ -132,7 +132,7 @@ namespace synthetisens {
 
   class constant_component : public component {
     public:
-      const double value;
+      double value;
 
       constant_component(double value);
       output_value& generate_output(int output) override;

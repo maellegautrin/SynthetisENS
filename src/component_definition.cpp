@@ -18,7 +18,6 @@ std::string synthetisens::component_icon[] = {
   "img/derivative.png",
   "img/primitive.png",
 
-  "img/const1.png",
   "img/const440.png",
   "img/speaker.png"
 };
@@ -36,7 +35,6 @@ ComponentType synthetisens::component_type[] = {
   OPERATOR,
   OPERATOR,
 
-  OTHER,
   OTHER,
   OTHER
 };
@@ -63,10 +61,8 @@ component* synthetisens::create_component(ComponentValue value) {
       return new derivative_component();
     case PRIMITIVE:
       return new primitive_component();
-    case CONSTANT1:
-      return new constant_component(1);
-    case CONSTANT440:
-      return new constant_component(440);
+    case CONSTANT:
+      return new constant_component(0);
     case SPEAKER:
       speaker = new speaker_component();
       return speaker;

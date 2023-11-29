@@ -18,8 +18,7 @@ namespace synthetisens {
     DERIVATIVE,
     PRIMITIVE,
 
-    CONSTANT1,
-    CONSTANT440,
+    CONSTANT,
     SPEAKER,
 
     COMPONENT_VALUE_COUNT

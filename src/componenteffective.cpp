@@ -1,7 +1,6 @@
 #include "componenteffective.h"
 #include "component.h"
 #include "component_definition.h"
-#include "componentselector.h"
 #include "gtkmm/enums.h"
 #include "gtkmm/frame.h"
 #include "gtkmm/grid.h"
@@ -10,10 +9,9 @@
 #include "gtkmm/window.h"
 #include "gtkmm/box.h"
 #include <cstring>
-#include <iostream>
-#include <list>
-#include <string>
 #include <vector>
+#include "gtkmm/dialog.h"
+#include "gtkmm/entry.h"
 
 extern Gtk::Window* window;
 
@@ -42,10 +40,6 @@ char* strcopy(const char* str){
 using namespace synthetisens;
 
 extern component* speaker;
-
-extern Port* last_clicked;
-extern int port_label;
-extern char* label_space;
 
 Port::Port(PortType type, ComponentEffective* parent) : type(type), parent(parent) {
   this->frame = new Gtk::Frame();
@@ -156,23 +150,27 @@ std::vector<Line> Port::draw_wires() {
   std::vector<Line> lines;
   for (int i = 0; i < wires.size(); i++) {
     Line line;
-    line.start.x = this->get_allocation().get_x() + this->get_allocation().get_width()/2;
-    line.start.y = this->get_allocation().get_y() + this->get_allocation().get_height()/2;
-    line.end.x = wires[i]->destination->get_allocation().get_x() + wires[i]->destination->get_allocation().get_width()/2;
-    line.end.y = wires[i]->destination->get_allocation().get_y() + wires[i]->destination->get_allocation().get_height()/2;
+    line.start.x = this->parent->get_allocation().get_x() + this->get_allocation().get_x() + this->get_allocation().get_width()/2;
+    line.start.y = this->parent->get_allocation().get_y() + this->get_allocation().get_y() + this->get_allocation().get_height()/2;
+    line.end.x = wires[i]->destination->parent->get_allocation().get_x() + wires[i]->destination->get_allocation().get_x() + wires[i]->destination->get_allocation().get_width()/2;
+    line.end.y = wires[i]->destination->parent->get_allocation().get_y() + wires[i]->destination->get_allocation().get_y() + wires[i]->destination->get_allocation().get_height()/2;
     lines.push_back(line);
   }
   return lines;
 }
 
 ComponentEffective::ComponentEffective(ComponentValue value) : value(value) {
+  this->grid = new Gtk::Grid();
   this->box = new Gtk::Box();
   this->img = new Gtk::Image(component_icon[this->value]);
   this->img->set_valign(Gtk::ALIGN_CENTER);
   this->img->set_halign(Gtk::ALIGN_CENTER);
   this->box->add(*(this->img));
+  this->add(*grid);
 
   virtual_component = create_component(value);
+
+  this->signal_button_release_event().connect(sigc::mem_fun(*this, &ComponentEffective::clicked));
 
   input_ports = new Port*[virtual_component->num_inputs + virtual_component->num_parameters];
   for (int i = 0; i < (virtual_component->num_inputs + virtual_component->num_parameters); i++){
@@ -188,20 +186,20 @@ ComponentEffective::ComponentEffective(ComponentValue value) : value(value) {
   const int m = MAX(num_inputs, virtual_component->num_outputs);
   if (num_inputs > 0){     //on attache les ports d'entrées à gauche de l'image du composant, les uns aux dessus des autres
     const int h = m/num_inputs;
-    this->attach(*this->input_ports[0],0,0,1,h);
-    this->attach_next_to(*this->box,*this->input_ports[0],Gtk::POS_RIGHT,1,m);
+    grid->attach(*this->input_ports[0],0,0,1,h);
+    grid->attach_next_to(*this->box,*this->input_ports[0],Gtk::POS_RIGHT,1,m);
     for(int n = 1; n < num_inputs; n++){
-      this->attach_next_to(*this->input_ports[n],*this->input_ports[n-1],Gtk::POS_BOTTOM,1,h);
+      grid->attach_next_to(*this->input_ports[n],*this->input_ports[n-1],Gtk::POS_BOTTOM,1,h);
     }
   } else {
-    this->attach(*this->box,0,0,1,m);
+    grid->attach(*this->box,0,0,1,m);
   }
 
   if(virtual_component->num_outputs > 0){ //même chose, pour les ports de sortie à droite
     const int h = m/virtual_component->num_outputs;
-    this->attach_next_to(*this->output_ports[0],*this->box,Gtk::POS_RIGHT,1,h);
+    grid->attach_next_to(*this->output_ports[0],*this->box,Gtk::POS_RIGHT,1,h);
     for(int n = 1; n < virtual_component->num_outputs; n++){
-      this->attach_next_to(*this->output_ports[n],*this->output_ports[n-1],Gtk::POS_BOTTOM,1,h);
+      grid->attach_next_to(*this->output_ports[n],*this->output_ports[n-1],Gtk::POS_BOTTOM,1,h);
     }
   }
 }
@@ -217,4 +215,24 @@ std::vector<Line> ComponentEffective::draw_ports() {
     lines.insert(lines.end(), port_lines.begin(), port_lines.end());
   }
   return lines;
+}
+
+bool ComponentEffective::clicked(GdkEventButton* event) {
+  if (this->value == CONSTANT) {
+    Gtk::Dialog* dialog = new Gtk::Dialog();
+    dialog->set_title("Value");
+    dialog->add_button("OK", Gtk::RESPONSE_OK);
+    dialog->add_button("Cancel", Gtk::RESPONSE_CANCEL);
+    Gtk::Entry* entry = new Gtk::Entry();
+    dialog->get_content_area()->add(*entry);
+    dialog->show_all();
+    int result = dialog->run();
+    dialog->close();
+    if (result == Gtk::RESPONSE_OK) {
+      int n_freq = std::atoi(entry->get_text().data());
+      constant_component* vcomponent = (constant_component*) this->virtual_component;
+      vcomponent->value = n_freq;
+    }
+  }
+  return true;
 }
