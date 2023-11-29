@@ -485,9 +485,22 @@ void set_blit(){
 
 void save_sound()
 {
-    synthetisens::signal* sig = speaker->generate_output(0).value.signal;
+  FileChooserDialog* dialog = new FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_SAVE);
+  dialog->set_transient_for(*window);
+  dialog->set_modal(true);
+  dialog->set_position(Gtk::WIN_POS_CENTER);
+  dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+  dialog->add_button("_Save", Gtk::RESPONSE_OK);
+  int result = dialog->run();
+    dialog->close();
+  if (result != Gtk::RESPONSE_OK) {
+    cout << "annuler" << endl;
+    return;
+  } 
+  synthetisens::signal* sig = speaker->generate_output(0).value.signal;
 
-    const char *filename = "output.wav";
+    string filename = dialog->get_filename();
+    cout << filename << endl;
     // Spécifiez les paramètres du fichier WAV
     SF_INFO sfinfo;
     sfinfo.samplerate = SAMPLE_FREQ; 
@@ -497,7 +510,7 @@ void save_sound()
     const int numSamples = 50000;
 
     // Créez un fichier WAV
-    SNDFILE *outfile = sf_open(filename, SFM_WRITE, &sfinfo);
+    SNDFILE *outfile = sf_open(filename.data(), SFM_WRITE, &sfinfo);
 
     std::vector<short> samples(50000);
 
