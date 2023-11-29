@@ -140,9 +140,13 @@ namespace synthetisens {
       output_value& generate_output(int output) override;
   };
 
+  class filter_component : public component {
+    public:
+      filter_component();
+      output_value& generate_output(int output) override;
+  };
+
 
 }
-
-
 
 #endif // _Component_H
