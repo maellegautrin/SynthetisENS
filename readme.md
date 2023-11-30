@@ -8,4 +8,4 @@ To compile this project, you need to ensure you have the following libs installe
 
 - GTKMM-3.0
 - STK
-- SNDSDK
+- SNDFILE

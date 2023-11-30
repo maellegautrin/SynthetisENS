@@ -70,6 +70,12 @@ namespace synthetisens {
       output_value& generate_output(int output) override;
   };
 
+  class inputwav_component : public component {
+    public:
+      inputwav_component();
+      output_value& generate_output(int output) override;
+  };
+
   class square_component : public component {
     public:
       square_component();

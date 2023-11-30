@@ -41,5 +41,6 @@ synthetisens::signal& operator*(const synthetisens::signal& sig1, const syntheti
 synthetisens::signal& operator/(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
 synthetisens::signal& derivative(const synthetisens::signal& sig);
 synthetisens::signal& normalize(const synthetisens::signal& sig);
+synthetisens::signal& inputwav();
 synthetisens::signal& primitive(const synthetisens::signal& sig);
 #endif // _SIGNAL_H
