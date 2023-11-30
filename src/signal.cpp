@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <sndfile.h>
+#include <gtkmm.h>
+#include <iostream>
+#include <vector>
 
 #define PI 3.14159265358979323846
 
@@ -142,4 +146,44 @@ signal& primitive(const signal& sig) {
   }
   signal* output_signal = new signal(size, nvalues, sig.loop);
   return *output_signal;
+}
+
+signal& inputwav(){
+
+    FileChooserDialog* dialog = new FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    dialog->set_transient_for(*window);
+    dialog->set_modal(true);
+    dialog->set_position(Gtk::WIN_POS_CENTER);
+    dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog->add_button("_Open", Gtk::RESPONSE_OK);
+    int result = dialog->run();
+    dialog->close();
+    if (result != Gtk::RESPONSE_OK) {
+      cout << "annuler" << endl;
+      return;
+    } 
+
+    string filename = dialog->get_filename();
+    cout << filename << endl;
+    SF_INFO sfinfo;
+    SNDFILE* sndfile = sf_open(filename, SFM_READ, &sfinfo);
+
+    if (!sndfile) {
+        std::cerr << "Impossible d'ouvrir le fichier : " << filename << std::endl;
+    }
+
+    const int size = 1024;
+    float sig[size];
+    sf_count_t frames_read;
+
+    double* nvalues = new double[size];
+
+    while ((frames_read = sf_readf_float(sndfile, sig, size))) {
+        for (int i = 0; i < frames_read; ++i) {
+            nvalues[i] = sig[i];
+        }
+    }
+    sf_close(sndfile);
+    signal* output_signal = new signal(size, nvalues, false);
+    return *output_signal;
 }
