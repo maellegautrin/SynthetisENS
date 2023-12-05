@@ -24,20 +24,6 @@ double signal::get_value(int position) const {
   return this->values[position];
 }
 
-void signal::set_value(int position, double value) {
-  double * new_table = new double[this->size];
-
-  for (int i = 0 ; i < this->size ; i++){
-    new_table[i] = thsi->values[i];
-  }
-  if (position < 0 || position >= this->size)  this->loop ? new_table[position % size] = value : continue ;
-    else{
-      new_table[position] = value;
-    }
-  del [] this->values ;
-  this->values = new_table ;
-}
-
 double signal::tick() {
   if (this->position < 0 || this->position >= this->size) {
     if (!this->loop) return 0;

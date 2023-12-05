@@ -216,7 +216,7 @@ synthetisens::ComponentSelector* square_selector;
 synthetisens::ComponentSelector* triangle_selector;
 synthetisens::ComponentSelector* sawtooth_selector;
 //FILTERS
-
+synthetisens::ComponentSelector* lowpass_selector;
 //OPERATORS
 synthetisens::ComponentSelector* sum_selector;
 synthetisens::ComponentSelector* sub_selector;
@@ -242,7 +242,8 @@ void selector_setup(){
   square_selector = new synthetisens::ComponentSelector("square.png",synthetisens::SIGNAL_COMPONENT,1);
   triangle_selector = new synthetisens::ComponentSelector("triangle.png",synthetisens::SIGNAL_COMPONENT,2);
   sawtooth_selector = new synthetisens::ComponentSelector("sawtooth.png",synthetisens::SIGNAL_COMPONENT,3);
-  //FILTERS André?
+  //FILTERS
+  lowpass_selector = new synthetisens::ComponentSelector("lowpass.jpg",synthetisens::FILTER_COMPONENT,0);
 
   //OPERATORS
   sum_selector = new synthetisens::ComponentSelector("sum.png",synthetisens::OPERATOR_COMPONENT,0);
@@ -268,7 +269,7 @@ void selector_setup(){
   sig_grid->attach(*triangle_selector,3,1,1,1);
   sig_grid->attach(*sawtooth_selector,1,2,1,1);
 
-  //filter_grid->attach
+  filter_grid->attach(*lowpass_selector,1,1,1,1);
 
   operator_grid->attach(*sum_selector,1,1,1,1);
   operator_grid->attach(*sub_selector,2,1,1,1);

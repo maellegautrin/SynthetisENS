@@ -220,6 +220,7 @@ component* match_component(ComponentType type, int id){
         if(id == 3) {return (new sawtooth_component());}
     }
     if (type == FILTER_COMPONENT){
+        if(id==0) return new filter_component();
     }
     if (type == OPERATOR_COMPONENT){
         if(id == 0) {return (new sum_component());}

@@ -1,4 +1,4 @@
-SYNTFLAGS = -Iinclude
+SYNTFLAGS = -include
 
 GTKMMFLAGS = $(shell pkg-config gtkmm-3.0 --cflags)
 GTKMMLIBS = $(shell pkg-config gtkmm-3.0 --libs)

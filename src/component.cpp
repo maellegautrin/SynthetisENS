@@ -243,76 +243,73 @@ output_value& filter_component::generate_output(int output) {
   double c = exp(-2*z*omega/SAMPLE_FREQ);
   double value = 0 ;
 
-  
-  signal* filtered_signal = new synthetisens::signal(size_table,  filtered_values, false);
-
   for ( int i = size_table-1 ; i>0 ; i-- ){
     switch ( order )
       {
          case 1:
           value  = omega/SAMPLE_FREQ*inputs[0]->get_value(i) +
-          (1 - omega/SAMPLE_FREQ)*filtered_signal->get_value(i-1);
+          (1 - omega/SAMPLE_FREQ)*filtered_values[i-1];
           break;
 
         case 2 :
-          value = a*inputs[0]->get_value(i-1) - b*filtered_signal->get_value(i-1)
-          + c*filtered_signal->get_value(i-2);
+          value = a*inputs[0]->get_value(i-1) - b*filtered_values[i-1]
+          + c*filtered_values[i-2];
           break ;
 
         case 3 :
-          value = a*inputs[0]->get_value(i-1) - b*filtered_signal->get_value(i-1)
-          + c*filtered_signal->get_value(i-2);
+          value = a*inputs[0]->get_value(i-1) - b*filtered_values[i-1]
+          + c*filtered_values[i-2];
           break ;
 
         case 4:
           value = pow(a, 2)*inputs[0]->get_value(i-1) 
-          -2*b*filtered_signal->get_value(i-1)
-          - (pow(b,2) + 2*c)*filtered_signal->get_value(i-2)
-          - 2*b*c*filtered_signal->get_value(i-3)
-          - pow(c,2)*filtered_signal->get_value(i-4);
+          -2*b*filtered_values[i-1]
+          - (pow(b,2) + 2*c)*filtered_values[i-2]
+          - 2*b*c*filtered_values[i-3]
+          - pow(c,2)*filtered_values[i-4];
           break;
 
         case 5 :
           value = pow(a, 2)*inputs[0]->get_value(i-1) 
-          -2*b*filtered_signal->get_value(i-1)
-          - (pow(b,2) + 2*c)*filtered_signal->get_value(i-2)
-          - 2*b*c*filtered_signal->get_value(i-3)
-          - pow(c,2)*filtered_signal->get_value(i-4);
+          -2*b*filtered_values[i-1]
+          - (pow(b,2) + 2*c)*filtered_values[i-2]
+          - 2*b*c*filtered_values[i-3]
+          - pow(c,2)*filtered_values[i-4];
           break;
 
         case 6 :
-          value =  pow(a, 6)*inputs[0]->get_value(i-1) 
-          - 3*b*filtered_signal->get_value(i-1)
-          - 3*(b*b + c)*filtered_signal->get_value(i-2)
-          - (pow(b,3) + 6*b*c)*filtered_signal->get_value(i-3)
-          - 3*c*(b*b + c)*filtered_signal->get_value(i-4)
-          - 3*b*c*c*filtered_signal->get_value(i-5)
-          - pow(c,3)*filtered_signal->get_value(i-6);
+          value =  pow(a, 6)*inputs[0]->get_value(i-1)
+          - 3*b*filtered_values[i-1]
+          - 3*(b*b + c)*filtered_values[i-2]
+          - (pow(b,3) + 6*b*c)*filtered_values[i-3]
+          - 3*c*(b*b + c)*filtered_values[i-4]
+          - 3*b*c*c*filtered_values[i-5]
+          - pow(c,3)*filtered_values[i-6];
           break;
 
         case 7 :
-          value =  pow(a, 6)*inputs[0]->get_value(i-1) 
-          - 3*b*filtered_signal->get_value(i-1)
-          - 3*(b*b + c)*filtered_signal->get_value(i-2)
-          - (pow(b,3) + 6*b*c)*filtered_signal->get_value(i-3)
-          - 3*c*(b*b + c)*filtered_signal->get_value(i-4)
-          - 3*b*c*c*filtered_signal->get_value(i-5)
-          - pow(c,3)*filtered_signal->get_value(i-6);
+          value =  pow(a, 6)*inputs[0]->get_value(i-1)
+          - 3*b*filtered_values[i-1]
+          - 3*(b*b + c)*filtered_values[i-2]
+          - (pow(b,3) + 6*b*c)*filtered_values[i-3]
+          - 3*c*(b*b + c)*filtered_values[i-4]
+          - 3*b*c*c*filtered_values[i-5]
+          - pow(c,3)*filtered_values[i-6];
           break ;
 
         case  8 :
           value = pow(a, 8)*inputs[0]->get_value(i-8)
-          - 4*b*filtered_signal->get_value(i-1)
-          - (6*b*b + 4*c)*filtered_signal->get_value(i-2)
-          - (12*b*c + 4*pow(b,3))*filtered_signal->get_value(i-3)
-          - (pow(b,4) + 12*b*b*c + 6*c*c)*filtered_signal->get_value(i-4)
-          - (12*b*c*c + 4*pow(b,3)*c + 4*b*pow(c,3))*filtered_signal->get_value(i-5)
-          - (4*pow(c,3) + 6*b*b*c*c)*filtered_signal->get_value(i-6)
-          - 4*b*pow(c,3)*filtered_signal->get_value(i-7)
-          - pow(c, 4)*filtered_signal->get_value(i-8);
+          - 4*b*filtered_values[i-1]
+          - (6*b*b + 4*c)*filtered_values[i-2]
+          - (12*b*c + 4*pow(b,3))*filtered_values[i-3]
+          - (pow(b,4) + 12*b*b*c + 6*c*c)*filtered_values[i-4]
+          - (12*b*c*c + 4*pow(b,3)*c + 4*b*pow(c,3))*filtered_values[i-5]
+          - (4*pow(c,3) + 6*b*b*c*c)*filtered_values[i-6]
+          - 4*b*pow(c,3)*filtered_values[i-7]
+          - pow(c, 4)*filtered_values[i-8];
           break ;
       }
-      filtered_signal->set_value(i) = value ;
+      filtered_signal[i] = value ;
       }
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
@@ -375,7 +372,7 @@ output_value& delay_component::generate_output(int output) {
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = delay_signal;
-  return *output_value;
+  return *output_value; 
 }
 
 
