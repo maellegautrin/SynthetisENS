@@ -309,8 +309,9 @@ output_value& filter_component::generate_output(int output) {
           - pow(c, 4)*filtered_values[i-8];
           break ;
       }
-      filtered_signal[i] = value ;
+      filtered_values[i] = value ;
       }
+  signal* filtered_signal = new synthetisens::signal(inputs[0]->size, filtered_values, inputs[0]->loop);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = filtered_signal;
@@ -329,7 +330,7 @@ output_value& dist_component::generate_output(int output) {
     switch (type)
     {
       case 0: // Soft saturation
-        out_table[i] = 4/PI_2*((1 + gain)*inputs[0]->get_value(i));
+        out_table[i] = 4/PI_2*atan((1 + gain)*inputs[0]->get_value(i));
         break;
 
       case 1 : // Hardclipping
@@ -346,7 +347,7 @@ output_value& dist_component::generate_output(int output) {
   output_value->type = SIGNAL;
   output_value->value.signal = output_signal;
   return *output_value;
-}
+};
 
 delay_component::delay_component() : component(1,3, 1) {}
 
@@ -358,22 +359,24 @@ output_value& delay_component::generate_output(int output) {
   double mix = parameters[2] ;
   int size = inputs[0]->size ;
   double * delay_tab = new double[size];
+
   for ( int i = 0 ; i < size; i++ ){
     delay_tab[i] = inputs[0]->get_value(i);
   }
   
-  signal* delay_signal = new synthetisens::signal(inputs[0]->size, delay_tab, false);
   double alpha = log(10)/((feedback -1)*time);
 
   for(int j = 1 ; j < feedback ; j++){
-    double x = inputs[0]->tick(j*time);
-    delay_signal = delay_signal + mix*exp(-alpha*(j-1)*inputs[0]);
+    for(int i = 0 ; i < inputs[0]->size ; i++){
+      delay_tab[i] += mix*exp(-alpha*(j-1)*inputs[0]->get_value(i+j*time))
+    }
   }
+  signal* delay_signal = new synthetisens::signal(inputs[0]->size, delay_tab, inputs[0]->loop);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = delay_signal;
   return *output_value; 
-}
+};
 
 
 
