@@ -58,6 +58,14 @@ namespace synthetisens {
       virtual output_value& generate_output(int port) = 0;
   };
 
+  class signal_component : public component {
+    private:
+      synthetisens::signal& sig;
+    public:
+      signal_component(synthetisens::signal& sig);
+      output_value& generate_output(int output) override;
+  };
+
   class speaker_component : public component {
     public:
       speaker_component();
@@ -69,6 +77,7 @@ namespace synthetisens {
       sinusoidal_component();
       output_value& generate_output(int output) override;
   };
+
 
   class square_component : public component {
     public:

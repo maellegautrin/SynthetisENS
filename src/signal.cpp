@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <sndfile.h>
+#include <gtkmm.h>
+#include <iostream>
+#include <vector>
 
 #define PI 3.14159265358979323846
 
