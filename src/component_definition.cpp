@@ -19,7 +19,8 @@ std::string synthetisens::component_icon[] = {
   "img/primitive.png",
 
   "img/const440.png",
-  "img/speaker.png"
+  "img/speaker.png",
+  "img/const1.png"
 };
 
 ComponentType synthetisens::component_type[] = {
@@ -35,6 +36,7 @@ ComponentType synthetisens::component_type[] = {
   OPERATOR,
   OPERATOR,
 
+  OTHER,
   OTHER,
   OTHER
 };
@@ -66,6 +68,8 @@ component* synthetisens::create_component(ComponentValue value) {
     case SPEAKER:
       speaker = new speaker_component();
       return speaker;
+    case CUSTOM:
+      return new custom_component();
     default:
       return nullptr;
   }

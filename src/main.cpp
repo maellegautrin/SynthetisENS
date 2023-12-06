@@ -188,9 +188,8 @@ synthetisens::ComponentSelector* speaker_selector;
 synthetisens::ComponentSelector* keyboard_selector;
 synthetisens::ComponentSelector* knob_selector;
 synthetisens::ComponentSelector* slider_selector;
-synthetisens::ComponentSelector* const0_selector;
 synthetisens::ComponentSelector* const_selector;
-
+synthetisens::ComponentSelector* custom_selector;
 
 void selector_setup() {
   //SIGNALS
@@ -215,9 +214,8 @@ void selector_setup() {
   // keyboard_selector = new ComponentSelector(KEYBOARD);
   // knob_selector = new ComponentSelector(KNOB);
   // slider_selector = new ComponentSelector(SLIDER);
-  // const0_selector = new ComponentSelector(CONSTANT);
   const_selector = new ComponentSelector(CONSTANT);
-  // const880_selector = new ComponentSelector(CONSTANT);
+  custom_selector = new ComponentSelector(CUSTOM);
 
   // cout << sine_selector << endl;
   sig_grid->attach(*sine_selector,1,1,1,1);
@@ -239,10 +237,8 @@ void selector_setup() {
   // other_grid->attach(*keyboard_selector,2,1,1,1);
   // other_grid->attach(*knob_selector,3,1,1,1);
   // other_grid->attach(*slider_selector,1,2,1,1);
-  // other_grid->attach(*const0_selector,2,2,1,1);
   other_grid->attach(*const_selector,1,3,1,1);
-  // other_grid->attach(*const880_selector,2,3,1,1);
-
+  other_grid->attach(*custom_selector,2,3,1,1);
 }
 
 /*--------------------------------------------*/
@@ -315,52 +311,15 @@ void save_sound()
     std::cout << "Fichier WAV créé avec succès." << std::endl;
 }
 
-synthetisens::signal& inputwav(){
 
-    FileChooserDialog* dialog = new FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
-    dialog->set_transient_for(*window);
-    dialog->set_modal(true);
-    dialog->set_position(Gtk::WIN_POS_CENTER);
-    dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-    dialog->add_button("_Open", Gtk::RESPONSE_OK);
-    int result = dialog->run();
-    dialog->close();
-    if (result != Gtk::RESPONSE_OK) {
-      cout << "annuler" << endl;
-    } 
-
-    string filename = dialog->get_filename();
-    cout << filename << endl;
-    SF_INFO sfinfo;
-    SNDFILE* sndfile = sf_open(filename.data(), SFM_READ, &sfinfo);
-
-    if (!sndfile) {
-        std::cerr << "Impossible d'ouvrir le fichier : " << filename << std::endl;
-    }
-
-    const int size = 1024;
-    float sig[size];
-    sf_count_t frames_read;
-
-    double* nvalues = new double[size];
-
-    while ((frames_read = sf_readf_float(sndfile, sig, size))) {
-        for (int i = 0; i < frames_read; ++i) {
-            nvalues[i] = sig[i];
-        }
-    }
-    sf_close(sndfile);
-    synthetisens::signal* output_signal = new synthetisens::signal(size, nvalues, false);
-    return *output_signal;
-}
 
 void play_sound()
 {
   dac = new RtWvOut( 1 );
   synthetisens::signal* sig = speaker->generate_output(0).value.signal;
-    
+  sig->reset();
 
-  for (int i = 0; i < 50000; i++) dac->tick(sig->tick());
+  for (int i = 0; i < sig->size; i++) dac->tick(sig->tick());
 
   delete dac;
 }

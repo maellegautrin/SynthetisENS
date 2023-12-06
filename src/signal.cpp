@@ -53,6 +53,7 @@ void signal::reset() {
   this->position = 0;
 }
 
+
 signal& operator+(const signal& sig1, const signal& sig2) {
   if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
 

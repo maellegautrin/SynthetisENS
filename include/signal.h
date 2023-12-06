@@ -35,6 +35,7 @@ namespace synthetisens {
 
 }
 
+
 synthetisens::signal& operator+(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
 synthetisens::signal& operator-(const synthetisens::signal& sig1, const synthetisens::signal& sig2);
 synthetisens::signal& operator*(const synthetisens::signal& sig1, const synthetisens::signal& sig2);

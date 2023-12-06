@@ -12,6 +12,9 @@
 #include <vector>
 #include "gtkmm/dialog.h"
 #include "gtkmm/entry.h"
+#include <sndfile.h>
+#include "gtkmm/filechooserdialog.h"
+
 
 extern Gtk::Window* window;
 
@@ -233,6 +236,37 @@ bool ComponentEffective::clicked(GdkEventButton* event) {
       constant_component* vcomponent = (constant_component*) this->virtual_component;
       vcomponent->value = n_freq;
     }
+  } else if (this->value == CUSTOM){
+    Gtk::FileChooserDialog* dialog = new Gtk::FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    dialog->set_transient_for(*window);
+    dialog->set_modal(true);
+    dialog->set_position(Gtk::WIN_POS_CENTER);
+    dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog->add_button("_Open", Gtk::RESPONSE_OK);
+    int result = dialog->run();
+    dialog->close();
+    if (result != Gtk::RESPONSE_OK) {
+      return false;
+    } 
+
+    std::string filename = dialog->get_filename();
+    SF_INFO sfinfo;
+    SNDFILE* sndfile = sf_open(filename.data(), SFM_READ, &sfinfo);
+
+    if (!sndfile) {
+        std::cerr << "Impossible d'ouvrir le fichier : " << filename << std::endl;
+    }
+    int framecount = sfinfo.frames;
+    int channels = sfinfo.channels;
+    std::cout << sfinfo.samplerate << std::endl;
+    double* buffer = new double [framecount * channels];
+    sf_readf_double(sndfile, buffer, framecount);
+
+    sf_close(sndfile);
+
+    synthetisens::signal* output_signal = new synthetisens::signal(framecount, buffer, false);
+    custom_component* ccomponent = (custom_component*) this->virtual_component;
+    ccomponent->set_signal(output_signal);
   }
   return true;
 }
