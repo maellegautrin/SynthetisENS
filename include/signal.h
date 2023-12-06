@@ -43,4 +43,5 @@ synthetisens::signal& operator/(const synthetisens::signal& sig1, const syntheti
 synthetisens::signal& derivative(const synthetisens::signal& sig);
 synthetisens::signal& normalize(const synthetisens::signal& sig);
 synthetisens::signal& primitive(const synthetisens::signal& sig);
+synthetisens::signal& change_samplerate(const synthetisens::signal& sig, int old_samplerate, int new_samplerate);
 #endif // _SIGNAL_H

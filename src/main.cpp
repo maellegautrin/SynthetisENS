@@ -319,7 +319,8 @@ void play_sound()
   synthetisens::signal* sig = speaker->generate_output(0).value.signal;
   sig->reset();
 
-  for (int i = 0; i < sig->size; i++) dac->tick(sig->tick());
+for (int i = 0; i < sig->size; i++) dac->tick(sig->tick());
+ //for (int i = 0; i < sig->size; i++) cout << sig->tick() <<endl;
 
   delete dac;
 }

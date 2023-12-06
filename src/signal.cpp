@@ -148,3 +148,18 @@ signal& primitive(const signal& sig) {
   signal* output_signal = new signal(size, nvalues, sig.loop);
   return *output_signal;
 }
+
+signal& change_samplerate(const signal& sig, int old_samplerate, int new_samplerate) {
+  double duration = sig.size / old_samplerate;
+  int new_size = duration * new_samplerate;
+
+  double* nvalues = new double[new_size];
+  for (int i=0; i<new_size; i++){
+    int old_i = ((double) i) * old_samplerate / new_samplerate;
+    double propdtime = ((double) i) * old_samplerate/new_samplerate - ((double)old_i);
+    //std::cout << old_i << std::endl;
+    nvalues[i] = propdtime* sig.get_value(old_i)+ (1.0 -propdtime)*sig.get_value(old_i + 1);
+  }
+  signal* output_signal = new signal(new_size, nvalues, sig.loop);
+  return *output_signal;
+}

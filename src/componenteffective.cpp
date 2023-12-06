@@ -265,8 +265,10 @@ bool ComponentEffective::clicked(GdkEventButton* event) {
     sf_close(sndfile);
 
     synthetisens::signal* output_signal = new synthetisens::signal(framecount, buffer, false);
+    synthetisens::signal* noutput_signal = &change_samplerate(*output_signal, sfinfo.samplerate, SAMPLE_FREQ);
     custom_component* ccomponent = (custom_component*) this->virtual_component;
-    ccomponent->set_signal(output_signal);
+
+    ccomponent->set_signal(noutput_signal);
   }
   return true;
 }
