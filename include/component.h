@@ -147,9 +147,25 @@ namespace synthetisens {
       output_value& generate_output(int output) override;
   };
 
+  class filter_component : public component {
+    public:
+      filter_component();
+      output_value& generate_output(int output) override;
+  };
+
+  class dist_component : public component {
+    public:
+      dist_component();
+      output_value& generate_output(int output) override;
+  };
+
+  class delay_component : public component {
+    public:
+      delay_component();
+      output_value& generate_output(int output) override;
+  };
+
 
 }
-
-
 
 #endif // _Component_H
