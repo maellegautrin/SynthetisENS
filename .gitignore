@@ -3,3 +3,5 @@ synthetisENS
 
 .clangd
 .vscode/
+
+*.wav
