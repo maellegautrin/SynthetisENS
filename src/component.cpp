@@ -246,6 +246,17 @@ output_value& primitive_component::generate_output(int output) {
   return *output_value;
 }
 
+signal_component::signal_component(synthetisens::signal& sig) : component(0,0,1), sig(sig) {}
+
+output_value& signal_component::generate_output(int output) {
+  output_value* output_value = new synthetisens::output_value;
+  output_value->type = SIGNAL;
+  output_value->value.signal = &this->sig;
+  return *output_value;
+
+}
+
+
 constant_component::constant_component(double value) : component(0, 0, 1), value(value) {}
 
 output_value& constant_component::generate_output(int output) {
