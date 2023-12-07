@@ -1,12 +1,8 @@
 #include "signal.h"
-#include "SineWave.h"
 #include <algorithm>
-#include <iostream>
 #include <math.h>
 #include <sndfile.h>
 #include <gtkmm.h>
-#include <iostream>
-#include <vector>
 
 #define PI 3.14159265358979323846
 
@@ -31,6 +27,16 @@ double signal::get_value(int position) const {
     return this->values[pos];
   }
   return this->values[position];
+}
+
+double* signal::get_values() const {
+  double* values = new double[this->size];
+
+  for (int i = 0; i < this->size; i++) {
+    values[i] = this->values[i];
+  }
+
+  return values;
 }
 
 double signal::get_max() const {

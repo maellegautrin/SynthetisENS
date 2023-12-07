@@ -70,3 +70,10 @@ component* synthetisens::create_component(ComponentValue value) {
       return nullptr;
   }
 }
+
+std::string synthetisens::component_type_name[] = {
+  "Generator",
+  "Filter",
+  "Operator",
+  "Other"
+};

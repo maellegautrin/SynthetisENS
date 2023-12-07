@@ -8,7 +8,6 @@
 #define _SIGNAL_H
 
 #define SAMPLE_FREQ 44100
-#include "SineWave.h"
 
 namespace synthetisens {
 
@@ -27,6 +26,7 @@ namespace synthetisens {
       ~signal();
       
       double get_value(int position) const;
+      double* get_values() const;
       double get_max() const;
 
       double tick();

@@ -2,6 +2,7 @@
 #define _COMPONENT_DEFINITION_H_
 
 #include "component.h"
+#include <string>
 
 namespace synthetisens {
 
@@ -28,13 +29,18 @@ namespace synthetisens {
     GENERATOR,
     FILTER,
     OPERATOR,
-    OTHER
+    OTHER,
+
+    COMPONENT_TYPE_COUNT
   };
 
   extern std::string component_icon[];
   extern ComponentType component_type[];
 
   component* create_component(ComponentValue value);
+
+
+  extern std::string component_type_name[];
 
 }
 
