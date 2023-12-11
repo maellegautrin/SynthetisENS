@@ -20,7 +20,7 @@ std::string synthetisens::component_icon[] = {
 
   "img/const440.png",
   "img/speaker.png",
-  "img/const1.png"
+  "img/input.png"
 };
 
 ComponentType synthetisens::component_type[] = {

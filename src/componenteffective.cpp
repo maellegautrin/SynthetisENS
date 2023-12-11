@@ -268,7 +268,9 @@ bool ComponentEffective::clicked(GdkEventButton* event) {
 
     double* nbuf = new double[framecount];
     for(int i = 0; i < framecount; i++){
-      nbuf[i] = buffer[i*channels];
+      for( int j = 0; j < channels; j++){
+        nbuf[i] = nbuf[i] + buffer[i*channels + j]; 
+      }
     }
 
     synthetisens::signal* output_signal = new synthetisens::signal(framecount, nbuf, false);
