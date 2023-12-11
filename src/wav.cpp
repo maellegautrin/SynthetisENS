@@ -79,7 +79,7 @@ synthetisens::signal& load_wav_signal() {
       }
     }
 
-    synthetisens::signal* output_signal = new synthetisens::signal(framecount, nbuf, false);
+    synthetisens::signal* output_signal = new synthetisens::signal(framecount, nbuf);
     synthetisens::signal* noutput_signal = &change_samplerate(*output_signal, sfinfo.samplerate, SAMPLE_FREQ);
    return *noutput_signal;
 }

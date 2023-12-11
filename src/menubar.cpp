@@ -10,10 +10,11 @@ MenuBar::MenuBar() {
   file_menu = Gtk::manage(new Gtk::Menu());
   play = Gtk::manage(new Gtk::MenuItem("_Play", true));
   save = Gtk::manage(new Gtk::MenuItem("_Save", true));
+  duration = Gtk::manage(new Gtk::MenuItem("_Duration", true));
 
   play->signal_activate().connect(sigc::ptr_fun(play_speaker));
   save->signal_activate().connect(sigc::ptr_fun(save_speaker_wav));
-
+  duration->signal_activate().connect(sigc::ptr_fun(change_duration));
   
   //Edit menu
   edit = Gtk::manage(new Gtk::MenuItem("_Edit", true));
@@ -31,7 +32,8 @@ MenuBar::MenuBar() {
   file->set_submenu(*file_menu);
   file_menu->append(*play);
   file_menu->append(*save);
-
+  file_menu->append(*duration);
+  
   view->set_submenu(*view_menu);
   view_menu->append(*preview);
 

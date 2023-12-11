@@ -7,6 +7,8 @@ using namespace synthetisens;
 
 #define PI_2 6.283185307179586476925286766559
 
+extern int duration;
+
 component::component(int num_inputs, int num_parameters, int num_outputs) : num_inputs(num_inputs), num_parameters(num_parameters), num_outputs(num_outputs) {
   this->inputs = new input_port[num_inputs + num_parameters];
 
@@ -75,12 +77,11 @@ sinusoidal_component::sinusoidal_component() : component(0, 3, 1) {}
 
 output_value& sinusoidal_component::generate_output(int output) {
   double* parameters = this->get_parameters();
-  int size = SAMPLE_FREQ / parameters[0];
-  double* values = new double[size];
-  for (int i = 0; i < size; i++) {
+  double* values = new double[duration];
+  for (int i = 0; i < duration; i++) {
     values[i] = parameters[1] * sin(2 * M_PI * parameters[0] * i / SAMPLE_FREQ + parameters[2]);
   }
-  signal* output_signal = new signal(size, values, true);
+  signal* output_signal = new signal(duration, values);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = output_signal;
@@ -91,30 +92,29 @@ square_component::square_component() : component(0, 4, 1) {}
 
 output_value& square_component::generate_output(int output) {
   double* parameters = this->get_parameters();
-  int size = SAMPLE_FREQ / parameters[0];
-  double* values = new double[size];
-  if (1 - parameters[4] / PI_2 * size > (double)size / 2) {
-    for (int i=0; i< 1 - parameters[4] / PI_2 * size; i++ ){
+  double* values = new double[duration];
+  if (1 - parameters[4] / PI_2 * duration > (double)duration / 2) {
+    for (int i=0; i< 1 - parameters[4] / PI_2 * duration; i++ ){
       values[i] = parameters[1]; //max
     }
-    for (int i = 1- parameters[4] / PI_2 * size; i < ((double)size / 2 + 1 - parameters[4] / PI_2 * size); i++) {
+    for (int i = 1- parameters[4] / PI_2 * duration; i < ((double)duration / 2 + 1 - parameters[4] / PI_2 * duration); i++) {
         values[i] = parameters[2]; // min
     }
-    for (int i = size/2; i < size; i++) {
+    for (int i = duration/2; i < duration; i++) {
         values[i] = parameters[1]; // max
     }
   } else {
-    for (int i=0; i < (double)size / 2 - parameters[4] / PI_2 * size; i++ ){
+    for (int i=0; i < (double)duration / 2 - parameters[4] / PI_2 * duration; i++ ){
       values[i] = parameters[2]; //min
     }
-    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < ((double)size / 2 - parameters[4] / PI_2 * size); i++) {
+    for (int i = (double)duration / 2 - parameters[4] / PI_2 * duration; i < ((double)duration / 2 - parameters[4] / PI_2 * duration); i++) {
         values[i] = parameters[1]; // max
     }
-    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < size; i++) {
+    for (int i = (double)duration / 2 - parameters[4] / PI_2 * duration; i < duration; i++) {
         values[i] = parameters[1]; // min
     }
   }
-  signal* output_signal = new signal(size, values, true);
+  signal* output_signal = new signal(duration, values);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = output_signal;
@@ -125,30 +125,29 @@ triangle_component::triangle_component() : component(0, 3, 1) {}
 
 output_value& triangle_component::generate_output(int output) {
   double* parameters = this->get_parameters();
-  int size = SAMPLE_FREQ / parameters[0];
-  double* values = new double[size];
-   if (1 - parameters[4] / PI_2 * size > (double)size / 2){
-    for (int i=0; i< 1 - parameters[4] / PI_2 * size; i++ ){
-      values[i] = ((-2 * parameters[1]) / size) * i + (2 * parameters[2]) * (1 - parameters[2]/ PI_2); //descendante
+  double* values = new double[duration];
+   if (1 - parameters[4] / PI_2 * duration > (double)duration / 2){
+    for (int i=0; i< 1 - parameters[4] / PI_2 * duration; i++ ){
+      values[i] = ((-2 * parameters[1]) / duration) * i + (2 * parameters[2]) * (1 - parameters[2]/ PI_2); //descendante
     }
-    for (int i = 1 - parameters[4] / PI_2 * size; i < ((double)size / 2 + 1 - parameters[4] / PI_2*size); i++) {
-        values[i] = ((-2 * parameters[1]) / size) * i + (2 * parameters[1]) * (parameters[2] / PI_2 - 1) ; // montante
+    for (int i = 1 - parameters[4] / PI_2 * duration; i < ((double)duration / 2 + 1 - parameters[4] / PI_2*duration); i++) {
+        values[i] = ((-2 * parameters[1]) / duration) * i + (2 * parameters[1]) * (parameters[2] / PI_2 - 1) ; // montante
     }
-    for (int i = size/2; i < size; i++) {
-        values[i] = (-2 * parameters[1]) / size * i + (2 * parameters[1]) * (0.5 - parameters[2] / PI_2) + parameters[1]; // descendante
+    for (int i = duration/2; i < duration; i++) {
+        values[i] = (-2 * parameters[1]) / duration * i + (2 * parameters[1]) * (0.5 - parameters[2] / PI_2) + parameters[1]; // descendante
     }
   } else {
-    for (int i=0; i < (double)size / 2 - parameters[4] / PI_2 * size; i++ ){
-      values[i] = ((2 * parameters[1]) / size) * (parameters[2] / PI_2 * size + i); //montante
+    for (int i=0; i < (double)duration / 2 - parameters[4] / PI_2 * duration; i++ ){
+      values[i] = ((2 * parameters[1]) / duration) * (parameters[2] / PI_2 * duration + i); //montante
     }
-    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < ((double)size / 2 - parameters[4] / PI_2 * size); i++) {
-        values[i] = (-2 * parameters[1] / size) * i + (2 * parameters[1]) * (1 - parameters[2] / PI_2); // descendante
+    for (int i = (double)duration / 2 - parameters[4] / PI_2 * duration; i < ((double)duration / 2 - parameters[4] / PI_2 * duration); i++) {
+        values[i] = (-2 * parameters[1] / duration) * i + (2 * parameters[1]) * (1 - parameters[2] / PI_2); // descendante
     }
-    for (int i = (double)size / 2 - parameters[4] / PI_2 * size; i < size; i++) {
-        values[i] = (2 * parameters[1] / size) * i + (-2 * parameters[1]) * (1 - parameters[2] / PI_2); // montante
+    for (int i = (double)duration / 2 - parameters[4] / PI_2 * duration; i < duration; i++) {
+        values[i] = (2 * parameters[1] / duration) * i + (-2 * parameters[1]) * (1 - parameters[2] / PI_2); // montante
     }
   }
-  signal* output_signal = new signal(size, values, true);
+  signal* output_signal = new signal(duration, values);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = output_signal;
@@ -159,12 +158,11 @@ sawtooth_component::sawtooth_component() : component(0, 2, 1) {}
 
 output_value& sawtooth_component::generate_output(int output) {
   double* parameters = get_parameters();
-  int size = SAMPLE_FREQ / parameters[0];
-  double* values = new double[size];
-  for (int i = 0; i < size; i++) {
-      values[i] = (parameters[1]*i)/size;
+  double* values = new double[duration];
+  for (int i = 0; i < duration; i++) {
+      values[i] = (parameters[1]*i)/duration;
   }
-  signal* output_signal = new signal(size, values, true);
+  signal* output_signal = new signal(duration, values);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = output_signal;
@@ -280,9 +278,8 @@ output_value& filter_component::generate_output(int output) {
   double z = parameters[1] ;
   int order = 1+ int(parameters[2])%8 ;
   int type = int(parameters[3]) ;
-  int size_table = inputs[0]->size ;
-  double* filtered_values = new double[size_table];
-  for ( int i = 0 ; i < size_table; i++ ){
+  double* filtered_values = new double[duration];
+  for ( int i = 0 ; i < duration; i++ ){
     filtered_values[i] = inputs[0]->get_value(i);
   }
   double omega = PI_2*cutoff_freq ;
@@ -291,7 +288,7 @@ output_value& filter_component::generate_output(int output) {
   double c = exp(-2*z*omega/SAMPLE_FREQ);
   double value = 0 ;
 
-  for ( int i = size_table-1 ; i>0 ; i-- ){
+  for ( int i = duration-1 ; i>0 ; i-- ){
     switch ( order )
       {
          case 1:
@@ -359,7 +356,7 @@ output_value& filter_component::generate_output(int output) {
       }
       filtered_values[i] = value ;
       }
-  signal* filtered_signal = new synthetisens::signal(inputs[0]->size, filtered_values, inputs[0]->loop);
+  signal* filtered_signal = new synthetisens::signal(duration, filtered_values);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = filtered_signal;
@@ -373,8 +370,8 @@ output_value& dist_component::generate_output(int output) {
   signal** inputs = get_input_signals();
   double gain = parameters[0] ;
   int type = int(parameters[1]) % 2 ;
-  double * out_table = new double[inputs[0]->size];
-  for( int i = 0 ; i < inputs[0]->size ; i++ ){
+  double * out_table = new double[duration];
+  for( int i = 0 ; i < duration ; i++ ){
     switch (type)
     {
       case 0: // Soft saturation
@@ -390,7 +387,7 @@ output_value& dist_component::generate_output(int output) {
         break;
     }
   }
-  signal* output_signal = new synthetisens::signal(inputs[0]->size, out_table, inputs[0]->loop);
+  signal* output_signal = new synthetisens::signal(duration, out_table);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = output_signal;
@@ -405,21 +402,20 @@ output_value& delay_component::generate_output(int output) {
   int time = int(parameters[0]) ;
   double feedback = parameters[1] ;
   double mix = parameters[2] ;
-  int size = inputs[0]->size ;
-  double * delay_tab = new double[size];
+  double * delay_tab = new double[duration];
 
-  for ( int i = 0 ; i < size; i++ ){
+  for ( int i = 0 ; i < duration; i++ ){
     delay_tab[i] = inputs[0]->get_value(i);
   }
   
   double alpha = log(10)/((feedback -1)*time);
 
   for(int j = 1 ; j < feedback ; j++){
-    for(int i = 0 ; i < inputs[0]->size ; i++){
+    for(int i = 0 ; i < duration; i++){
       delay_tab[i] += mix*exp(-alpha*(j-1)*inputs[0]->get_value(i+j*time));
     }
   }
-  signal* delay_signal = new synthetisens::signal(inputs[0]->size, delay_tab, inputs[0]->loop);
+  signal* delay_signal = new synthetisens::signal(duration, delay_tab);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
   output_value->value.signal = delay_signal;

@@ -6,9 +6,11 @@
 #include "gtkmm/frame.h"
 #include "signal_viewer.h"
 #include "window.h"
+#include "gtkmm/entry.h"
 
 extern synthetisens::component* speaker;
 extern synthetisens::Window* window;
+extern int duration;
 
 void play_signal(synthetisens::signal& sig) {
   stk::RtWvOut play_sample = stk::RtWvOut(1);
@@ -46,4 +48,21 @@ void preview_speaker() {
 
   pop->show_all_children();
   pop->show();
+}
+
+void change_duration() {
+   Gtk::Dialog* dialog = new Gtk::Dialog();
+    dialog->set_title("Change Duration");
+    dialog->add_button("OK", Gtk::RESPONSE_OK);
+    dialog->add_button("Cancel", Gtk::RESPONSE_CANCEL);
+    Gtk::Entry* entry = new Gtk::Entry();
+    entry->set_text(std::to_string(duration/SAMPLE_FREQ));
+    dialog->get_content_area()->add(*entry);
+    dialog->show_all();
+    int result = dialog->run();
+    dialog->close();
+    if (result == Gtk::RESPONSE_OK) {
+      duration = SAMPLE_FREQ*std::atoi(entry->get_text().data());
+      
+    }
 }

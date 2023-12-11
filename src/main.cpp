@@ -13,6 +13,7 @@ using namespace std;
 
 synthetisens::Window* window;
 synthetisens::component* speaker;
+int duration = 10*SAMPLE_FREQ;
 
 // Main function
 int main(int argc, char *argv[])

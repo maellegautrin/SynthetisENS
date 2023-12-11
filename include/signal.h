@@ -18,11 +18,9 @@ namespace synthetisens {
       
     public:
       const int size;
-      const bool loop;
 
       signal();
       signal(int size, double* values);
-      signal(int size, double* values, bool loop);
       ~signal();
       
       double get_value(int position) const;

@@ -13,6 +13,7 @@ namespace synthetisens {
       Gtk::Menu* file_menu;
       Gtk::MenuItem* play;
       Gtk::MenuItem* save;
+      Gtk::MenuItem* duration;
 
       Gtk::MenuItem* edit;
 
