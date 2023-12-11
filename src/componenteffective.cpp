@@ -243,8 +243,10 @@ bool ComponentEffective::clicked(GdkEventButton* event) {
     dialog->set_position(Gtk::WIN_POS_CENTER);
     dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
     dialog->add_button("_Open", Gtk::RESPONSE_OK);
+    
     int result = dialog->run();
     dialog->close();
+
     if (result != Gtk::RESPONSE_OK) {
       return false;
     } 
@@ -256,15 +258,20 @@ bool ComponentEffective::clicked(GdkEventButton* event) {
     if (!sndfile) {
         std::cerr << "Impossible d'ouvrir le fichier : " << filename << std::endl;
     }
-    int framecount = sfinfo.frames;
-    int channels = sfinfo.channels;
-    std::cout << sfinfo.samplerate << std::endl;
-    double* buffer = new double [framecount * channels];
-    sf_readf_double(sndfile, buffer, framecount);
-
+    
+    const int framecount = sfinfo.frames;
+    const int channels = sfinfo.channels;
+    const int buffer_size = framecount * channels;
+    double* buffer = new double[buffer_size];
+    sf_readf_double(sndfile, buffer, buffer_size);
     sf_close(sndfile);
 
-    synthetisens::signal* output_signal = new synthetisens::signal(framecount, buffer, false);
+    double* nbuf = new double[framecount];
+    for(int i = 0; i < framecount; i++){
+      nbuf[i] = buffer[i*channels];
+    }
+
+    synthetisens::signal* output_signal = new synthetisens::signal(framecount, nbuf, false);
     synthetisens::signal* noutput_signal = &change_samplerate(*output_signal, sfinfo.samplerate, SAMPLE_FREQ);
     custom_component* ccomponent = (custom_component*) this->virtual_component;
 

@@ -320,7 +320,7 @@ void play_sound()
   sig->reset();
 
 for (int i = 0; i < sig->size; i++) dac->tick(sig->tick());
- //for (int i = 0; i < sig->size; i++) cout << sig->tick() <<endl;
+ // for (int i = 0; i < sig->size; i++) cout << sig->tick() <<endl;
 
   delete dac;
 }
