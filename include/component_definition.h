@@ -21,6 +21,7 @@ namespace synthetisens {
 
     CONSTANT,
     SPEAKER,
+    CUSTOM,
 
     COMPONENT_VALUE_COUNT
   };

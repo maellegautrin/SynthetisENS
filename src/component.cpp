@@ -64,9 +64,10 @@ speaker_component::speaker_component() : component(1, 0, 0) {}
 
 output_value& speaker_component::generate_output(int output) {
   signal** inputs = get_input_signals();
+  signal* output_signal = &normalize(*inputs[0]);
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
-  output_value->value.signal = inputs[0];
+  output_value->value.signal = output_signal;
   return *output_value;
 }
 
@@ -246,12 +247,16 @@ output_value& primitive_component::generate_output(int output) {
   return *output_value;
 }
 
-signal_component::signal_component(synthetisens::signal& sig) : component(0,0,1), sig(sig) {}
+custom_component::custom_component() : component(0,0,1), sig(new signal()) {}
 
-output_value& signal_component::generate_output(int output) {
+void custom_component::set_signal(synthetisens::signal* sig){
+  this->sig = sig;
+}
+
+output_value& custom_component::generate_output(int output) {
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
-  output_value->value.signal = &this->sig;
+  output_value->value.signal = this->sig;
   return *output_value;
 
 }

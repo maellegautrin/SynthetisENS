@@ -12,6 +12,9 @@
 #include <vector>
 #include "gtkmm/dialog.h"
 #include "gtkmm/entry.h"
+#include <sndfile.h>
+#include "gtkmm/filechooserdialog.h"
+#include "wav.h"
 
 extern Gtk::Window* window;
 
@@ -233,6 +236,10 @@ bool ComponentEffective::clicked(GdkEventButton* event) {
       constant_component* vcomponent = (constant_component*) this->virtual_component;
       vcomponent->value = n_freq;
     }
+  } else if (this->value == CUSTOM){ 
+    custom_component* ccomponent = (custom_component*) this->virtual_component;
+
+    ccomponent->set_signal(&load_wav_signal());
   }
   return true;
 }

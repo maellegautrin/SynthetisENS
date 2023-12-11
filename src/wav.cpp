@@ -43,36 +43,43 @@ void save_speaker_wav() {
 }
 
 synthetisens::signal& load_wav_signal() {
-  Gtk::FileChooserDialog* dialog = new Gtk::FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
-  dialog->set_transient_for(*window);
-  dialog->set_modal(true);
-  dialog->set_position(Gtk::WIN_POS_CENTER);
-  dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-  dialog->add_button("_Open", Gtk::RESPONSE_OK);
+    Gtk::FileChooserDialog* dialog = new Gtk::FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+    dialog->set_transient_for(*window);
+    dialog->set_modal(true);
+    dialog->set_position(Gtk::WIN_POS_CENTER);
+    dialog->add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog->add_button("_Open", Gtk::RESPONSE_OK);
+    
+    int result = dialog->run();
+    dialog->close();
 
-  int result = dialog->run();
-  dialog->close();
+    if (result != Gtk::RESPONSE_OK) {
+      return *(new synthetisens::signal());
+    } 
 
-  if (result != Gtk::RESPONSE_OK) {
-    return *(new synthetisens::signal());
-  } 
+    std::string filename = dialog->get_filename();
+    SF_INFO sfinfo;
+    SNDFILE* sndfile = sf_open(filename.data(), SFM_READ, &sfinfo);
 
-  string filename = dialog->get_filename();
+    if (!sndfile) {
+        std::cerr << "Impossible d'ouvrir le fichier : " << filename << std::endl;
+    }
+    
+    const int framecount = sfinfo.frames;
+    const int channels = sfinfo.channels;
+    const int buffer_size = framecount * channels;
+    double* buffer = new double[buffer_size];
+    sf_readf_double(sndfile, buffer, buffer_size);
+    sf_close(sndfile);
 
-  //Open the wav file
-  SF_INFO sfinfo;
-  sfinfo.format = 0;
-  SNDFILE* sndfile = sf_open(filename.data(), SFM_READ, &sfinfo);
-  if (!sndfile) {
-    std::cerr << "Impossible d'ouvrir le fichier : " << filename << std::endl;
-  }
+    double* nbuf = new double[framecount];
+    for(int i = 0; i < framecount; i++){
+      for( int j = 0; j < channels; j++){
+        nbuf[i] = nbuf[i] + buffer[i*channels + j]; 
+      }
+    }
 
-  //Read the wav file
-  int size = sfinfo.frames;
-  double* nvalues = new double[size];
-  sf_count_t frames_read = sf_readf_double(sndfile, nvalues, size);
-  sf_close(sndfile);
-
-  synthetisens::signal* output_signal = new synthetisens::signal(size, nvalues, false);
-  return *output_signal;
+    synthetisens::signal* output_signal = new synthetisens::signal(framecount, nbuf, false);
+    synthetisens::signal* noutput_signal = &change_samplerate(*output_signal, sfinfo.samplerate, SAMPLE_FREQ);
+   return *noutput_signal;
 }
