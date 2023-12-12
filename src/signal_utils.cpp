@@ -31,6 +31,7 @@ void play_speaker_thread() {
 }
 
 void play_speaker() {
+  if (playing) return;
   playing = true;
   std::thread t(play_speaker_thread);
   t.detach();
