@@ -1,5 +1,6 @@
 #include "workspace_panel.h"
 #include "gtkmm/object.h"
+#include "keyboard.h"
 
 using namespace synthetisens;
 
@@ -12,8 +13,12 @@ WorkspacePanel::WorkspacePanel() {
   sequencer = Gtk::manage(new Sequencer(18,18));
   sequencer->set_size_request(900,600);
 
+  keyboard = Gtk::manage(new Keyboard());
+  keyboard->set_size_request(900, 600);
+
   notebook->append_page(*circuitArea, "Circuit");
   notebook->append_page(*sequencer, "Sequencer");
+  notebook->append_page(*keyboard, "Keyboard");
 
   add(*notebook);
 }

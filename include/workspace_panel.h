@@ -5,6 +5,7 @@
 #include "gtkmm/frame.h"
 #include "gtkmm/notebook.h"
 #include "sequencer.h"
+#include "keyboard.h"
 
 namespace synthetisens {
 
@@ -14,6 +15,8 @@ namespace synthetisens {
 
       CircuitArea* circuitArea;
       Sequencer* sequencer;
+      Keyboard* keyboard;
+
 
     public:
       WorkspacePanel();

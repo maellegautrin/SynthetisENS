@@ -252,11 +252,13 @@ void custom_component::set_signal(synthetisens::signal* sig){
 }
 
 output_value& custom_component::generate_output(int output) {
+  double* nvalues = this->sig->get_values(0, duration);
+  signal* output_signal = new signal(duration, nvalues);
+
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
-  output_value->value.signal = this->sig;
+  output_value->value.signal = output_signal;
   return *output_value;
-
 }
 
 
