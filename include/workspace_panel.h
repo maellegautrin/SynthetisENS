@@ -4,6 +4,7 @@
 #include "circuit_area.h"
 #include "gtkmm/frame.h"
 #include "gtkmm/notebook.h"
+#include "sequencer.h"
 
 namespace synthetisens {
 
@@ -12,6 +13,7 @@ namespace synthetisens {
       Gtk::Notebook* notebook;
 
       CircuitArea* circuitArea;
+      Sequencer* sequencer;
 
     public:
       WorkspacePanel();
