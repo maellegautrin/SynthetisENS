@@ -256,7 +256,6 @@ output_value& custom_component::generate_output(int output) {
   output_value->type = SIGNAL;
   output_value->value.signal = this->sig;
   return *output_value;
-
 }
 
 
