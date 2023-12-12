@@ -3,7 +3,8 @@
 
 
 
-#include "gtkmm/action.h"
+#include "gtkmm/frame.h"
+#include "gtkmm/image.h"
 #include "gtkmm/button.h"
 #include "gtkmm/box.h"
 #include "gtkmm/eventbox.h"
@@ -13,7 +14,8 @@
 
 namespace synthetisens {
 
-  typedef enum {
+
+  enum note_t {
     C = 0,
     Cs,
     D,
@@ -26,48 +28,41 @@ namespace synthetisens {
     A,
     As,
     B
-  } note_t;
-
-  typedef enum {
-    WHITE_KEY,
-    BLACK_KEY
-  } KeyType;
-
-  double freq[12] = {
-    130.81,
-    138.59,
-    146.83,
-    155.56,
-    164.81,
-    174.61,
-    185.0,
-    196.0,
-    207.65,
-    220.0,
-    233.08,
-    246.94
   };
 
-  class Key : public Gtk::EventBox {
-    public:
-    Key(note_t note, KeyType type);
+  enum key_t{
+    WHITE_KEY,
+    BLACK_KEY
+  };
 
-    void click_handler();
+  extern double note_freq[];
+
+  class Key : public Gtk::Frame {
+    public:
+    Key(note_t note, key_t type);
+    void pressed();
+    void released();
 
     private:
     Gtk::Image* image;
     note_t note;
-    KeyType type;
+    key_t type;
 
 
   };
 
-  class Keyboard : public Gtk::Layout {
+  class Keyboard : public Gtk::EventBox {
     public:
     Keyboard();
+    bool press(GdkEventKey* key);
+    bool release(GdkEventKey* key);
 
     private:
+    Gtk::Layout* layout;
     Key** keylist;
+
+};
+
 
 }
 
