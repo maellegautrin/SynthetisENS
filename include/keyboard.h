@@ -14,7 +14,6 @@
 
 namespace synthetisens {
 
-
   enum note_t {
     C = 0,
     Cs,
@@ -27,7 +26,9 @@ namespace synthetisens {
     Gs,
     A,
     As,
-    B
+    B,
+
+    NOTE_COUNT
   };
 
   enum key_t{
@@ -39,27 +40,25 @@ namespace synthetisens {
 
   class Key : public Gtk::Frame {
     public:
-    Key(note_t note, key_t type);
-    void pressed();
-    void released();
+      Key(note_t note, key_t type);
+      void pressed();
+      void released();
 
     private:
-    Gtk::Image* image;
-    note_t note;
-    key_t type;
-
-
+      Gtk::Image* image;
+      note_t note;
+      key_t type;
   };
 
   class Keyboard : public Gtk::EventBox {
     public:
-    Keyboard();
-    bool press(GdkEventKey* key);
-    bool release(GdkEventKey* key);
+      Keyboard();
+      bool press(GdkEventKey* key);
+      bool release(GdkEventKey* key);
 
     private:
-    Gtk::Layout* layout;
-    Key** keylist;
+      Gtk::Layout* layout;
+      Key** keylist;
 
 };
 

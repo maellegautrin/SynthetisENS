@@ -65,13 +65,9 @@ void Key::released(){
 
 
 Keyboard::Keyboard(){
+  keylist = new Key*[NOTE_COUNT];
 
-
-
-
-
-  keylist = new Key*;
-  keylist[0] = new Key((note_t)0,WHITE_KEY);
+  keylist[0] = new Key(C,WHITE_KEY);
   keylist[1] = new Key(Cs,BLACK_KEY);
   keylist[2] = new Key(D,WHITE_KEY);
   keylist[3] = new Key(Ds,BLACK_KEY);
