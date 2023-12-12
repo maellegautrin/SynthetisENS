@@ -25,6 +25,9 @@ int main(int argc, char *argv[])
   window = new synthetisens::Window();
   speaker = new synthetisens::speaker_component();
 
+    window->signal_key_press_event().connect(sigc::mem_fun(*(window->workspacePanel->keyboard), &synthetisens::Keyboard::press));
+  window->signal_key_release_event().connect(sigc::mem_fun(*(window->workspacePanel->keyboard), &synthetisens::Keyboard::release));
+
   stk::Stk::setSampleRate(44100.0);
   stk::Stk::showWarnings(true);
 

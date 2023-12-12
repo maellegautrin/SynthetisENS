@@ -17,10 +17,11 @@ namespace synthetisens {
       MenuBar* menuBar;
       IconBar* iconBar;
       SelectPanel* selectPanel;
-      WorkspacePanel* workspacePanel;
+      
 
     public:
       Window();
+      WorkspacePanel* workspacePanel;
   };
 
 }

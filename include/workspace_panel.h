@@ -9,17 +9,20 @@
 
 namespace synthetisens {
 
+
+
   class WorkspacePanel : public Gtk::Frame {
     private:
       Gtk::Notebook* notebook;
 
       CircuitArea* circuitArea;
       Sequencer* sequencer;
-      Keyboard* keyboard;
+      
 
 
     public:
       WorkspacePanel();
+      Keyboard* keyboard;
   };
 
 }
