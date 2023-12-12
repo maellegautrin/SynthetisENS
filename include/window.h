@@ -4,6 +4,7 @@
 #include "gtkmm/grid.h"
 #include "gtkmm/window.h"
 #include "menubar.h"
+#include "iconbar.h"
 #include "select_panel.h"
 #include "workspace_panel.h"
 
@@ -14,6 +15,7 @@ namespace synthetisens {
       Gtk::Grid* grid;
 
       MenuBar* menuBar;
+      IconBar* iconBar;
       SelectPanel* selectPanel;
       WorkspacePanel* workspacePanel;
 

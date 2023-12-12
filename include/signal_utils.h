@@ -4,6 +4,7 @@
 #include "signal.h"
 
 void play_signal(synthetisens::signal& sig);
+void stop_signal();
 
 void play_speaker();
 void preview_speaker();
