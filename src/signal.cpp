@@ -25,10 +25,14 @@ double signal::get_value(int position) const {
 }
 
 double* signal::get_values() const {
-  double* values = new double[this->size];
+  return get_values(0, this->size);
+}
 
-  for (int i = 0; i < this->size; i++) {
-    values[i] = this->values[i];
+double* signal::get_values(int start, int len) const {
+  double* values = new double[len];
+
+  for (int i = 0; i < len; i++) {
+    values[i] = this->values[start + i];
   }
 
   return values;

@@ -25,6 +25,7 @@ namespace synthetisens {
       
       double get_value(int position) const;
       double* get_values() const;
+      double* get_values(int start, int len) const;
       double get_max() const;
 
       double tick();
