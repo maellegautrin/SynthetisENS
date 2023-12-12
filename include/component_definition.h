@@ -18,7 +18,9 @@ namespace synthetisens {
     DIV,
     DERIVATIVE,
     PRIMITIVE,
-
+    
+    FILTERC,
+    
     CONSTANT,
     SPEAKER,
     CUSTOM,
