@@ -6,7 +6,8 @@
 #include <sndfile.h>
 
 extern synthetisens::Window* window;
-extern synthetisens::component* speaker;
+extern synthetisens::speaker_component* speaker;
+extern int duration;
 
 void save_speaker_wav() {
   Gtk::FileChooserDialog* dialog = new Gtk::FileChooserDialog("Choose a file", Gtk::FILE_CHOOSER_ACTION_SAVE);
@@ -23,7 +24,7 @@ void save_speaker_wav() {
     return;
   } 
 
-  synthetisens::signal* sig = speaker->generate_output(0).value.signal;
+  synthetisens::signal* sig = speaker->generate_output(0, duration).value.signal;
 
   string filename = dialog->get_filename();
   

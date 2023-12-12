@@ -12,7 +12,8 @@
 using namespace std;
 
 synthetisens::Window* window;
-synthetisens::component* speaker;
+synthetisens::speaker_component* speaker;
+synthetisens::keyboard_component* keyboard;
 int duration = 10 * SAMPLE_FREQ;
 bool playing = false;
 

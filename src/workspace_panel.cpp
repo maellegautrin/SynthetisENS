@@ -9,11 +9,7 @@ WorkspacePanel::WorkspacePanel() {
   circuitArea = Gtk::manage(new CircuitArea());
   circuitArea->set_size_request(900, 600);
 
-  keyboard = Gtk::manage(new Keyboard());
-  keyboard->set_size_request(900, 600);
-
   notebook->append_page(*circuitArea, "Circuit");
-  notebook->append_page(*keyboard, "Keyboard");
 
   add(*notebook);
 }

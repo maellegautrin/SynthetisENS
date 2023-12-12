@@ -10,44 +10,20 @@
 #include "gtkmm/eventbox.h"
 #include "gtkmm/layout.h"
 #include "gdk/gdkkeysyms.h"
+#include "note.h"
 
 
 namespace synthetisens {
 
-  enum note_t {
-    C = 0,
-    Cs,
-    D,
-    Ds,
-    E,
-    F,
-    Fs,
-    G,
-    Gs,
-    A,
-    As,
-    B,
-
-    NOTE_COUNT
-  };
-
-  enum key_t{
-    WHITE_KEY,
-    BLACK_KEY
-  };
-
-  extern double note_freq[];
-
   class Key : public Gtk::Frame {
     public:
-      Key(note_t note, key_t type);
+      Key(key note);
       void pressed();
       void released();
 
     private:
       Gtk::Image* image;
-      note_t note;
-      key_t type;
+      key note;
   };
 
   class Keyboard : public Gtk::EventBox {
