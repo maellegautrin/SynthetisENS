@@ -8,21 +8,36 @@
 #include "window.h"
 #include "gtkmm/entry.h"
 
+#include <thread>
+
 extern synthetisens::component* speaker;
 extern synthetisens::Window* window;
 extern int duration;
+extern bool playing;
 
 void play_signal(synthetisens::signal& sig) {
   stk::RtWvOut play_sample = stk::RtWvOut(1);
 
   sig.reset();
-  for (int i = 0; i < sig.size; i++) {
+  for (int i = 0; i < sig.size && playing; i++) {
     play_sample.tick(sig.tick());
   }
+
+  playing = false;
+}
+
+void play_speaker_thread() {
+  play_signal(*speaker->generate_output(0).value.signal);
 }
 
 void play_speaker() {
-  play_signal(*speaker->generate_output(0).value.signal);
+  playing = true;
+  std::thread t(play_speaker_thread);
+  t.detach();
+}
+
+void stop_signal() {
+  playing = false;
 }
 
 void preview_speaker() {

@@ -10,11 +10,13 @@ Window::Window() {
 
   grid = Gtk::manage(new Gtk::Grid());
   menuBar = Gtk::manage(new MenuBar());
+  iconBar = Gtk::manage(new IconBar());
   selectPanel = Gtk::manage(new SelectPanel());
   workspacePanel = Gtk::manage(new WorkspacePanel());
 
   grid->attach(*menuBar, 0, 0, 3, 1);
-  grid->attach_next_to(*selectPanel, *menuBar, Gtk::POS_BOTTOM, 3, 3);
+  grid->attach(*iconBar, 0, 1, 3, 1);
+  grid->attach_next_to(*selectPanel, *iconBar, Gtk::POS_BOTTOM, 3, 3);
   grid->attach_next_to(*workspacePanel, *selectPanel, Gtk::POS_RIGHT, 3, 3);
   
   add(*grid);
