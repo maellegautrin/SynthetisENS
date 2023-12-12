@@ -18,8 +18,13 @@ std::string synthetisens::component_icon[] = {
   "img/derivative.png",
   "img/primitive.png",
 
-  "img/const440.png",
-  "img/speaker.png"
+  "img/filter.png",
+
+  "img/const.png",
+  "img/speaker.png",
+  "img/input.png",
+
+  
 };
 
 ComponentType synthetisens::component_type[] = {
@@ -35,6 +40,9 @@ ComponentType synthetisens::component_type[] = {
   OPERATOR,
   OPERATOR,
 
+  FILTER,
+
+  OTHER,
   OTHER,
   OTHER
 };
@@ -61,12 +69,24 @@ component* synthetisens::create_component(ComponentValue value) {
       return new derivative_component();
     case PRIMITIVE:
       return new primitive_component();
+    case FILTERC:
+      return new filter_component();
     case CONSTANT:
       return new constant_component(0);
     case SPEAKER:
       speaker = new speaker_component();
       return speaker;
+    case CUSTOM:
+      return new custom_component();
+    
     default:
       return nullptr;
   }
 }
+
+std::string synthetisens::component_type_name[] = {
+  "Generator",
+  "Filter",
+  "Operator",
+  "Other"
+};

@@ -58,11 +58,12 @@ namespace synthetisens {
       virtual output_value& generate_output(int port) = 0;
   };
 
-  class signal_component : public component {
+  class custom_component : public component {
     private:
-      synthetisens::signal& sig;
+      synthetisens::signal* sig;
     public:
-      signal_component(synthetisens::signal& sig);
+      custom_component();
+      void set_signal(synthetisens::signal* sig);
       output_value& generate_output(int output) override;
   };
 
@@ -147,9 +148,25 @@ namespace synthetisens {
       output_value& generate_output(int output) override;
   };
 
+  class filter_component : public component {
+    public:
+      filter_component();
+      output_value& generate_output(int output) override;
+  };
+
+  class dist_component : public component {
+    public:
+      dist_component();
+      output_value& generate_output(int output) override;
+  };
+
+  class delay_component : public component {
+    public:
+      delay_component();
+      output_value& generate_output(int output) override;
+  };
+
 
 }
-
-
 
 #endif // _Component_H

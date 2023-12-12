@@ -1,7 +1,5 @@
 #include "signal.h"
-#include "SineWave.h"
 #include <algorithm>
-#include <iostream>
 #include <math.h>
 #include <sndfile.h>
 #include <gtkmm.h>
@@ -15,9 +13,7 @@ using namespace synthetisens;
 
 signal::signal() : signal(0, new double[0]) {}
 
-signal::signal(int size, double* values) : signal(size, values, false) {}
-
-signal::signal(int size, double* values, bool loop) : size(size), position(0), values(values), loop(loop) {}
+signal::signal(int size, double* values) : size(size), values(values) {}
 
 signal::~signal() {
   delete[] values;
@@ -25,12 +21,19 @@ signal::~signal() {
 
 double signal::get_value(int position) const {
   if (position < 0 || position >= this->size) {
-    if (!this->loop) return 0;
-    int pos = position % this->size;
-    if (pos < 0) pos += this->size;
-    return this->values[pos];
+    return 0;
   }
   return this->values[position];
+}
+
+double* signal::get_values() const {
+  double* values = new double[this->size];
+
+  for (int i = 0; i < this->size; i++) {
+    values[i] = this->values[i];
+  }
+
+  return values;
 }
 
 double signal::get_max() const {
@@ -43,7 +46,6 @@ double signal::get_max() const {
 
 double signal::tick() {
   if (this->position < 0 || this->position >= this->size) {
-    if (!this->loop) return 0;
     this->position %= this->size;
   }
   return this->values[this->position++];
@@ -53,10 +55,11 @@ void signal::reset() {
   this->position = 0;
 }
 
-signal& operator+(const signal& sig1, const signal& sig2) {
-  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
 
-  int size = max(sig1.size, sig2.size);
+signal& operator+(const signal& sig1, const signal& sig2) {
+  if (sig1.size != sig2.size) throw "Cannot add two signals with different size values";
+
+  int size = sig1.size;
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -68,9 +71,9 @@ signal& operator+(const signal& sig1, const signal& sig2) {
 }
 
 signal& operator-(const signal& sig1, const signal& sig2) {
-  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+  if (sig1.size != sig2.size) throw "Cannot sub two signals with different size values";
 
-  int size = max(sig1.size, sig2.size);
+  int size = sig1.size;
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -82,9 +85,9 @@ signal& operator-(const signal& sig1, const signal& sig2) {
 }
 
 signal& operator*(const signal& sig1, const signal& sig2) {
-  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+  if (sig1.size != sig2.size) throw "Cannot mul two signals with different size values";
 
-  int size = max(sig1.size, sig2.size);
+  int size = sig1.size;
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -96,9 +99,9 @@ signal& operator*(const signal& sig1, const signal& sig2) {
 }
 
 signal& operator/(const signal& sig1, const signal& sig2) {
-  if (sig1.loop != sig2.loop) throw "Cannot add two signals with different loop values";
+  if (sig1.size != sig2.size) throw "Cannot div two signals with different size values";
 
-  int size = max(sig1.size, sig2.size);
+  int size = sig1.size;
   double* values = new double[size];
 
   for (int i = 0; i < size; i++) {
@@ -119,7 +122,7 @@ signal& derivative(const signal& sig) {
     values[i] = (sig.get_value(i + 1) - sig.get_value(i - 1)) * (double)SAMPLE_FREQ / 2.0;
   }
 
-  signal* output_signal = new signal(size, values, sig.loop);
+  signal* output_signal = new signal(size, values);
   return *output_signal;
 }
 
@@ -130,7 +133,7 @@ signal& normalize(const signal& sig) {
   for (int i=0; i<size; i++){
     nvalues[i]=sig.get_value(i)/max;
   }
-  signal* output_signal = new signal(size, nvalues, sig.loop);
+  signal* output_signal = new signal(size, nvalues);
   return *output_signal;
 }
 
@@ -144,6 +147,21 @@ signal& primitive(const signal& sig) {
     current_sum += (sig.get_value(i) + sig.get_value(i-1)) / (2 * SAMPLE_FREQ);
     nvalues[i] = current_sum;
   }
-  signal* output_signal = new signal(size, nvalues, sig.loop);
+  signal* output_signal = new signal(size, nvalues);
+  return *output_signal;
+}
+
+signal& change_samplerate(const signal& sig, int old_samplerate, int new_samplerate) {
+  double duration = sig.size / old_samplerate;
+  int new_size = duration * new_samplerate;
+
+  double* nvalues = new double[new_size];
+  for (int i=0; i<new_size; i++){
+    int old_i = ((double) i) * old_samplerate / new_samplerate;
+    double propdtime = ((double) i) * old_samplerate/new_samplerate - ((double)old_i);
+    //std::cout << old_i << std::endl;
+    nvalues[i] = propdtime* sig.get_value(old_i)+ (1.0 -propdtime)*sig.get_value(old_i + 1);
+  }
+  signal* output_signal = new signal(new_size, nvalues);
   return *output_signal;
 }
