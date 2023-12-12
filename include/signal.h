@@ -30,6 +30,9 @@ namespace synthetisens {
 
       double tick();
       void reset();
+
+      int get_position() const;
+      void set_position(int pos);
   };
 
 }

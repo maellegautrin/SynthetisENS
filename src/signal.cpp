@@ -59,6 +59,14 @@ void signal::reset() {
   this->position = 0;
 }
 
+int signal::get_position() const {
+  return this->position;
+}
+
+void signal::set_position(int pos) {
+  this->position = pos;
+}
+
 
 signal& operator+(const signal& sig1, const signal& sig2) {
   if (sig1.size != sig2.size) throw "Cannot add two signals with different size values";

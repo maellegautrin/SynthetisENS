@@ -10,7 +10,7 @@
 
 #include <thread>
 
-extern synthetisens::component* speaker;
+extern synthetisens::speaker_component* speaker;
 extern synthetisens::Window* window;
 extern int duration;
 extern bool playing;
@@ -27,7 +27,26 @@ void play_signal(synthetisens::signal& sig) {
 }
 
 void play_speaker_thread() {
-  play_signal(*speaker->generate_output(0).value.signal);
+  synthetisens::signal* sig = speaker->generate_output(0, duration).value.signal;
+  sig->reset();
+
+  stk::RtWvOut play_sample = stk::RtWvOut(1);
+
+  for (int i = 0; i < sig->size && playing; i++) {
+    if (speaker->update_signal) {
+      int pos = sig->get_position();
+      sig = speaker->generate_output(0, duration).value.signal;
+      sig->set_position(pos);
+      speaker->update_signal = false;
+    }
+
+    play_sample.tick(sig->tick());
+  }
+
+  playing = false;
+
+
+  // play_signal(*speaker->generate_output(0, duration).value.signal);
 }
 
 void play_speaker() {
@@ -57,7 +76,7 @@ void preview_speaker() {
 
   Frame* frame = new Frame();
 
-  synthetisens::SignalViewer* sigview = new synthetisens::SignalViewer(1000, 500, speaker->generate_output(0).value.signal);
+  synthetisens::SignalViewer* sigview = new synthetisens::SignalViewer(1000, 500, speaker->generate_output(0, duration).value.signal);
   frame->add(*sigview);
 
   pop->get_content_area()->add(*frame);

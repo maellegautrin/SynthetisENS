@@ -12,6 +12,7 @@
 #define _COMPONENT_H
 
 #include "signal.h"
+#include "note.h"
 #include <vector>
 
 namespace synthetisens {
@@ -40,7 +41,7 @@ namespace synthetisens {
     protected:
       input_port* inputs;
 
-      signal** get_input_signals();
+      signal** get_input_signals(int sig_size);
       double* get_parameters();
 
     public:
@@ -55,7 +56,7 @@ namespace synthetisens {
       void disconnect_input(int input_num);
       port_type get_port_type(int port_num) const;
 
-      virtual output_value& generate_output(int port) = 0;
+      virtual output_value& generate_output(int port, int sig_size) = 0;
   };
 
   class custom_component : public component {
@@ -64,80 +65,82 @@ namespace synthetisens {
     public:
       custom_component();
       void set_signal(synthetisens::signal* sig);
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class speaker_component : public component {
     public:
+      bool update_signal;
+
       speaker_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class sinusoidal_component : public component {
     public:
       sinusoidal_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
 
   class square_component : public component {
     public:
       square_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class triangle_component : public component {
     public:
       triangle_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class sawtooth_component : public component {
     public:
       sawtooth_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class sum_component : public component {
     public:
       sum_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class sub_component : public component {
     public:
       sub_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class prod_component : public component {
     public:
       prod_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class div_component : public component {
     public:
       div_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class derivative_component : public component {
     public:
       derivative_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class normalize_component : public component {
     public:
       normalize_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class primitive_component : public component {
     public:
       primitive_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class constant_component : public component {
@@ -145,25 +148,39 @@ namespace synthetisens {
       double value;
 
       constant_component(double value);
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class filter_component : public component {
     public:
       filter_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class dist_component : public component {
     public:
       dist_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
   };
 
   class delay_component : public component {
     public:
       delay_component();
-      output_value& generate_output(int output) override;
+      output_value& generate_output(int output, int sig_size) override;
+  };
+
+  class keyboard_component : public component {
+    private:
+      bool* pressed_keys;
+
+    public:
+      keyboard_component();
+      ~keyboard_component();
+
+      void press_key(key k);
+      void release_key(key k);
+
+      output_value& generate_output(int output, int sig_size) override;
   };
 
 
