@@ -9,7 +9,7 @@ WorkspacePanel::WorkspacePanel() {
   circuitArea = Gtk::manage(new CircuitArea());
   circuitArea->set_size_request(900, 600);
   
-  sequencer = Gtk::manage(new Sequencer(12,15));
+  sequencer = Gtk::manage(new Sequencer(12,18));
   sequencer->set_size_request(900,600);
 
   notebook->append_page(*circuitArea, "Circuit");

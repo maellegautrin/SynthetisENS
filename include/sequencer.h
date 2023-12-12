@@ -21,6 +21,7 @@ namespace synthetisens {
     public:
       SequencerCell(int id, SequencerLine* line);
       void image_update();
+      bool hovered(GdkEventCrossing* event);
       bool clicked(GdkEventButton* event);
       
     
@@ -43,7 +44,7 @@ namespace synthetisens {
     private:
 
       int length;
-      SequencerCell* cells[15];
+      SequencerCell** cells;
   };
 
   class Sequencer : public Gtk::Grid {
@@ -53,7 +54,7 @@ namespace synthetisens {
     private:
       int range;
       int length;
-      SequencerLine* lines[12];
+      SequencerLine** lines;
 
   };
 
