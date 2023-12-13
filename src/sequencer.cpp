@@ -7,7 +7,10 @@ std::set<int> whites = {0,2,4,5,7,9,11};
 using namespace synthetisens;
 
 void SequencerCell::image_update(){
-  if(line->values[id]) this->image->set(Gdk::Pixbuf::create_from_file("img/cell_on.png"));
+  if(line->values[id]) {
+    if((id + line->id) % 2) this->image->set(Gdk::Pixbuf::create_from_file("img/cell_dark_on.png"));
+    else this->image->set(Gdk::Pixbuf::create_from_file("img/cell_bright_on.png"));
+  }
   else {
     if((id + line->id) % 2) this->image->set(Gdk::Pixbuf::create_from_file("img/cell_dark.png"));
     else this->image->set(Gdk::Pixbuf::create_from_file("img/cell_bright.png"));
