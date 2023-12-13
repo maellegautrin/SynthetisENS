@@ -3,7 +3,8 @@
 
 using namespace synthetisens;
 
-extern component* speaker;
+extern speaker_component* speaker;
+extern keyboard_component* keyboard;
 
 std::string synthetisens::component_icon[] = {
   "img/sine.png",
@@ -22,6 +23,7 @@ std::string synthetisens::component_icon[] = {
 
   "img/slider.png",
   "img/speaker.png",
+  "img/keyboard.png",
   "img/input.png",
 
   
@@ -42,6 +44,7 @@ ComponentType synthetisens::component_type[] = {
 
   FILTER,
 
+  OTHER,
   OTHER,
   OTHER,
   OTHER
@@ -76,6 +79,9 @@ component* synthetisens::create_component(ComponentValue value) {
     case SPEAKER:
       speaker = new speaker_component();
       return speaker;
+    case KEYBOARD:
+      keyboard = new keyboard_component();
+      return keyboard;
     case CUSTOM:
       return new custom_component();
     

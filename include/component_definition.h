@@ -23,6 +23,7 @@ namespace synthetisens {
     
     CONSTANT,
     SPEAKER,
+    KEYBOARD,
     CUSTOM,
 
     COMPONENT_VALUE_COUNT

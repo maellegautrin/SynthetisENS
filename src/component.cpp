@@ -2,6 +2,7 @@
 
 #include "component.h"
 #include <cmath>
+#include <iostream>
 
 using namespace synthetisens;
 
@@ -424,6 +425,10 @@ output_value& delay_component::generate_output(int output, int sig_size) {
 
 keyboard_component::keyboard_component() : component(1, 1, 1) {
   this->pressed_keys = new bool[KEY_COUNT];
+
+  for (int i = 0; i < KEY_COUNT; i++) {
+    this->pressed_keys[i] = false;
+  }
 }
 
 keyboard_component::~keyboard_component() {
@@ -442,7 +447,11 @@ output_value& keyboard_component::generate_output(int output, int sig_size) {
   double* parameters = this->get_parameters();
   double freq = parameters[0];
 
-  signal* output_signal = new signal(sig_size, new double[sig_size]);
+  double* values = new double[sig_size];
+  for (int i = 0; i < sig_size; i++) {
+    values[i] = 0;
+  }
+  signal* output_signal = new signal(sig_size, values);
 
   for (int i = 0; i < KEY_COUNT; i++) {
     if (this->pressed_keys[i]) {

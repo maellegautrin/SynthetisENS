@@ -40,7 +40,9 @@ void play_speaker_thread() {
       speaker->update_signal = false;
     }
 
-    play_sample.tick(sig->tick());
+    // play_sample.tick(sig->tick());
+
+    cout << sig->tick() << endl;
   }
 
   playing = false;
