@@ -1,6 +1,10 @@
 #include "select_panel.h"
 #include "component_definition.h"
 
+#include <iostream>
+
+using namespace std;
+
 using namespace synthetisens;
 
 Tab::Tab(ComponentType tabType) : tabType(tabType) {

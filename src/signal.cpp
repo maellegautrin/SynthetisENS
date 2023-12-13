@@ -142,6 +142,10 @@ signal& normalize(const signal& sig) {
   int size =sig.size;
   double* nvalues = new double[size];
   double max = sig.get_max();
+  if (max == 0) {
+    max = 1;
+  }
+
   for (int i=0; i<size; i++){
     nvalues[i]=sig.get_value(i)/max;
   }

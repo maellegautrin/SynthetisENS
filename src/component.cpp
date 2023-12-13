@@ -61,7 +61,7 @@ port_type component::get_port_type(int port_num) const {
   return VALUE;
 }
 
-speaker_component::speaker_component() : component(1, 0, 0) {}
+speaker_component::speaker_component() : component(1, 0, 0), update_signal(false) {}
 
 output_value& speaker_component::generate_output(int output, int sig_size) {
   signal** inputs = get_input_signals(sig_size);
@@ -451,7 +451,6 @@ output_value& keyboard_component::generate_output(int output, int sig_size) {
   for (int i = 0; i < sig_size; i++) {
     values[i] = 0;
   }
-  signal* output_signal = new signal(sig_size, values);
 
   for (int i = 0; i < KEY_COUNT; i++) {
     if (this->pressed_keys[i]) {
@@ -460,9 +459,15 @@ output_value& keyboard_component::generate_output(int output, int sig_size) {
 
       signal** inputs = get_input_signals(req_size);
 
-      output_signal = &(*output_signal + change_samplerate(*inputs[0], n_freq, freq));
+
+      signal& curr_sig = change_samplerate(*inputs[0], n_freq, freq);
+      for (int j = 0; j < sig_size; j++) {
+        values[j] += curr_sig.get_value(j);
+      }
     }
   }
+
+  signal* output_signal = new signal(sig_size, values);
 
   output_value* output_value = new synthetisens::output_value;
   output_value->type = SIGNAL;
